@@ -1,12 +1,14 @@
-const locationRepository = require("../repositories/locationRepository");
-const Location = require("../models/locationModel.js");
+const LocationRepository = require("../repositories/locationRepository");
+const Location = require("../models/locationModel");
 
-class locationService {
+class LocationService {
     static async createLocation(Location) {
         try {
             return locationRepository.createLocation(Location);
         } catch (e) {
-            console.error("Error in createLocation service:", e);  
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in createLocation service:", e);
+            }  
             throw new Error(e.message || "An error occurred while creating the location.");
         }
 
@@ -15,7 +17,9 @@ class locationService {
         try {
             return locationRepository.getLocation(city);
         } catch (e) {
-            console.error("Error in getLocation service:", e);  
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in getLocation service:", e);
+            }  
             throw new Error(e.message || "An error occurred while fetching the location.");
         }
     }
@@ -23,10 +27,12 @@ class locationService {
         try {
             return locationRepository.updateLocation(city, updates);
         } catch (e) {
-            console.error("Error in updateLocation service:", e); 
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in updateLocation service:", e); 
+            }
             throw new Error(e.message || "An error occurred while updating the location.");
         }
     }
 }
 
-module.exports=locationService;
+module.exports=LocationService;

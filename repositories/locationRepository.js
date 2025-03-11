@@ -1,8 +1,8 @@
-const Location = require("../models/locationModel.js");
-const database = require("../config/db.js");
+const Location = require("../models/locationModel");
+const database = require("../config/db");
 require('dotenv').config();
 
-class locationRepository{
+class LocationRepository{
 
     static async createLocation(Location){
         try{
@@ -98,4 +98,4 @@ class locationRepository{
 
 }
 
-module.exports = locationRepository;
+module.exports = LocationRepository;
