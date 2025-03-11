@@ -1,5 +1,6 @@
 const Location = require("../models/locationModel.js");
 const database = require("../config/db.js");
+require('dotenv').config();
 
 class locationRepository{
 
@@ -14,7 +15,10 @@ class locationRepository{
                 affectedRows
             };
         }catch(e){
-            throw new Error(e.sqlMessage);
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in createLocation:", e); // Logs full error for debugging
+            }
+            throw new Error(e.sqlMessage || "An error occurred while creating location.");
         }
     }
 
@@ -29,48 +33,65 @@ class locationRepository{
 
             return Location.fromRow(rows[0]);
         }catch(e){
-            throw new Error(e.sqlMessage);
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in getLocation:", e);
+            }
+            throw new Error(e.sqlMessage || "An error occurred while fetching location.");
         }
     }
 
     static async locationExists(city){
-        let sql = `SELECT * FROM location WHERE city=?`;
-        const [rows] = await database.query(sql,city);
-        //check the rows
-        if(rows && rows.lenght){
-            return true;
+        try{
+            let sql = `SELECT * FROM location WHERE city=?`;
+            const [rows] = await database.query(sql,city);
+            //check the rows
+            if(rows && rows.length){
+                return true;
+            }
+
+            return false;
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in locationExists:", e);
+            }
+            throw new Error(e.sqlMessage || "An error occurred while checking the location.");
         }
-
-        return false;
-
     }
 
     static async updateLocation(city, updates) {
-        if (!await this.locationExists(city)) {
-            return { message: "Location does not exist" };
+        try{
+            if (!await this.locationExists(city)) {
+                return { message: "Location does not exist" };
+            }
+    
+            if (!updates || Object.keys(updates).length === 0) {
+                return { message: "No updates provided" };
+            }
+    
+            let sql = "UPDATE location SET ";
+            let conditions = [];
+            let values = [];
+    
+            for (const key in updates) {
+                conditions.push(`${key} = ?`);
+                values.push(updates[key]);
+            }
+    
+            sql += conditions.join(", ");
+            sql += " WHERE city = ?";
+            values.push(city);
+    
+            const [result] = await database.query(sql, values);
+            const { affectedRows } = result;
+    
+            return { affectedRows };
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in updateLocation:", e); 
+            }
+            throw new Error(e.sqlMessage || "An error occurred while updating location.");
         }
-
-        if (!updates || Object.keys(updates).length === 0) {
-            return { message: "No updates provided" };
-        }
-
-        let sql = "UPDATE location SET ";
-        let conditions = [];
-        let values = [];
-
-        for (const key in updates) {
-            conditions.push(`${key} = ?`);
-            values.push(updates[key]);
-        }
-
-        sql += conditions.join(", ");
-        sql += " WHERE city = ?";
-        values.push(city);
-
-        const [result] = await database.query(sql, values);
-        const { affectedRows } = result;
-
-        return { affectedRows };
+        
     }
 
 
