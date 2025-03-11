@@ -40,24 +40,6 @@ class locationRepository{
         }
     }
 
-    static async locationExists(city){
-        try{
-            let sql = `SELECT * FROM location WHERE city=?`;
-            const [rows] = await database.query(sql,city);
-            //check the rows
-            if(rows && rows.length){
-                return true;
-            }
-
-            return false;
-        }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in locationExists:", e);
-            }
-            throw new Error(e.sqlMessage || "An error occurred while checking the location.");
-        }
-    }
-
     static async updateLocation(city, updates) {
         try{
             if (!await this.locationExists(city)) {
@@ -92,6 +74,25 @@ class locationRepository{
             throw new Error(e.sqlMessage || "An error occurred while updating location.");
         }
         
+    }
+
+    //for class use
+    static async locationExists(city){
+        try{
+            let sql = `SELECT * FROM location WHERE city=?`;
+            const [rows] = await database.query(sql,city);
+            //check the rows
+            if(rows && rows.length){
+                return true;
+            }
+
+            return false;
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in locationExists:", e);
+            }
+            throw new Error(e.sqlMessage || "An error occurred while checking the location.");
+        }
     }
 
 
