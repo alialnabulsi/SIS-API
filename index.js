@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 //Import Routes
-
+const locationRoute = require("../routes/locationRoute");
 
 
 //Database Coneection
@@ -20,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
-
+app.use('/sis/location',locationRoute);
 
 
 // Start the server
