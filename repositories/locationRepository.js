@@ -8,7 +8,6 @@ class locationRepository{
             let sql = `INSERT INTO location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
-
             const [result] = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
             const{affectedRows} = result;
             return{
@@ -36,7 +35,7 @@ class locationRepository{
 
     static async locationExists(city){
         let sql = `SELECT * FROM location WHERE city=?`;
-        const [rows] = await db.query(sql,city);
+        const [rows] = await database.query(sql,city);
         //check the rows
         if(rows && rows.lenght){
             return true;
