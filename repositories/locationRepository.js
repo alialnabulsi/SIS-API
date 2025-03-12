@@ -31,9 +31,12 @@ class LocationRepository{
             }
             let sql = `SELECT * FROM location WHERE city = ?`;
 
-            const[rows] = await conn.query(sql,city);
-
-            return Location.fromRow(rows[0]);
+            const[rows] = await conn.query(sql,[city]);
+            
+            if (!rows || rows.length === 0) {
+                return { message: "Location not found" };
+            }
+            return Location.fromRow(rows);
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in getLocation:", e);
@@ -90,7 +93,7 @@ class LocationRepository{
                 return true;
             }
 
-            return false;
+            return true;
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in locationExists:", e);

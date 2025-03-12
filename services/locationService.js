@@ -15,7 +15,7 @@ class LocationService {
     }
     static async getLocation(city) {
         try {
-            return locationRepository.getLocation(city);
+            return LocationRepository.getLocation(city);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in getLocation service:", e);

@@ -10,7 +10,7 @@ class Location{
 
     static fromRow(row){
         return new Location(
-            row.LocationID,
+            row.locationID,
             row.city,
             row.zipCode,
             row.address
