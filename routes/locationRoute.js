@@ -1,11 +1,12 @@
 const express = require('express');
 const LocationController = require('../controllers/locationController');
+const { validateLocation,validateCityParam,validateLocationUpdate } = require('../validators/DTO');
 
 const router = express.Router();
 
-router.post('/', LocationController.createLocation);
-router.get('/:city', LocationController.getLocation);
-router.put('/:city', LocationController.updateLocation);
+router.post('/',validateLocation ,LocationController.createLocation);
+router.get('/:city',validateCityParam, LocationController.getLocation);
+router.put('/:city', validateLocationUpdate,LocationController.updateLocation);
 
 
 module.exports = router;
