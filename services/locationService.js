@@ -4,7 +4,7 @@ const Location = require("../models/locationModel");
 class LocationService {
     static async createLocation(Location) {
         try {
-            return locationRepository.createLocation(Location);
+            return LocationRepository.createLocation(Location);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in createLocation service:", e);
