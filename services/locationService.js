@@ -25,7 +25,7 @@ class LocationService {
     }
     static async updateLocation(city, updates) {
         try {
-            return locationRepository.updateLocation(city, updates);
+            return LocationRepository.updateLocation(city, updates);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in updateLocation service:", e); 
