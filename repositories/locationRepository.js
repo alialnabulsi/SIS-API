@@ -6,7 +6,7 @@ class LocationRepository{
 
     static async createLocation(Location){
         try{
-            let sql = `INSERT INTO location 
+            let sql = `INSER INTO location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
             const result = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
@@ -16,7 +16,7 @@ class LocationRepository{
             };
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createLocation:", e); // Logs full error for debugging
+                console.error("Database Error in createLocation:", e); 
             }
             throw new Error(e.sqlMessage || "An error occurred while creating location.");
         }

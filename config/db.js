@@ -9,4 +9,4 @@ const pool = database.createPool({
     connectionLimit: 100
 });
 
-    module.exports = pool;
+module.exports = pool;
