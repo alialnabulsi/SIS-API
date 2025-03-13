@@ -18,7 +18,7 @@ class LocationRepository{
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in createLocation:", e); 
             }
-            throw new Error(e.sqlMessage || "An error occurred while creating location.");
+            throw new Error(e.sqlMessage);
         }
     }
 
