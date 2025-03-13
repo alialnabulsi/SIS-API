@@ -6,11 +6,10 @@ class LocationRepository{
 
     static async createLocation(Location){
         try{
-            const conn = await database.pool.getConnection(); 
             let sql = `INSERT INTO location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
-            const result = await conn.query(sql,[Location.city, Location.zipCode, Location.address]);
+            const result = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
             const{affectedRows} = result;
             return{
                 affectedRows
@@ -25,13 +24,12 @@ class LocationRepository{
 
     static async getLocation(city){
         try{
-            const conn = await database.pool.getConnection();
             if (! await this.locationExists(city)){
                 return {message: "Location does not exist"};
             }
             let sql = `SELECT * FROM location WHERE city = ?`;
 
-            const [row] = await conn.query(sql,city);
+            const [row] = await database.query(sql,city);
             
             if (!row || row.length === 0) {
                 return { message: "Location not found" };
@@ -46,7 +44,6 @@ class LocationRepository{
     }
 
     static async updateLocation(city, updates) {
-        const conn = await database.pool.getConnection();
         try{
             if (!await this.locationExists(city)) {
                 return { message: "Location does not exist" };
@@ -69,7 +66,7 @@ class LocationRepository{
             sql += " WHERE city = ?";
             values.push(city);
     
-            const result = await conn.query(sql, values);
+            const result = await database.query(sql, values);
             const { affectedRows } = result;
     
             return { affectedRows };
@@ -84,10 +81,9 @@ class LocationRepository{
 
     //for class use
     static async locationExists(city){
-        const conn = await database.pool.getConnection();
         try{
             let sql = `SELECT * FROM location WHERE city=?`;
-            const rows = await conn.query(sql,city);
+            const rows = await database.query(sql,city);
             //check the rows
             if(rows && rows.length){
                 return true;

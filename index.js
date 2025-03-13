@@ -7,13 +7,7 @@ const bodyParser = require('body-parser');
 const locationRoute = require('./routes/locationRoute');
 
 
-//Database Coneection
-const {connectDB} = require('./config/db');
-
 const app = express();
-
-// Connect to Database
-connectDB();
 
 // Middleware
 app.use(cors());
