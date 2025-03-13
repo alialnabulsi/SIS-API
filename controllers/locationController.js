@@ -36,7 +36,7 @@ class LocationController {
 
             const result = await LocationService.updateLocation(city,updates);
 
-            res.status(200).json(result);
+            res.status(201).json(result);
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
