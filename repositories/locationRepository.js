@@ -7,6 +7,11 @@ In the table Location in the database the city attribute is considered as unique
 class LocationRepository{
     
     static async createLocation(Location){
+        if (! await this.locationExists(Location.city)){
+            const error = new Error("Location already exists");
+            error.statusCode = 400; 
+            throw error;
+        }
         try{
             let sql = `INSERT INTO location 
             (city, zipCode, address)
