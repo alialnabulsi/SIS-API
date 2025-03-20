@@ -9,7 +9,7 @@ class LocationService {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in createLocation service:", e);
             }  
-            throw new Error(e.message || "An error occurred while creating the location.");
+            throw new Error(e.message);
         }
 
     }
