@@ -1,6 +1,7 @@
 const database= require("mariadb");
 require('dotenv').config();
 
+//insiated a pool connection
 const pool = database.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -9,4 +10,4 @@ const pool = database.createPool({
     connectionLimit: 100
 });
 
-module.exports = pool;
+module.exports = pool; // export the pool to avoid repetition of intiating a connection
