@@ -3,16 +3,17 @@ const database = require("../config/db");
 require('dotenv').config();
 
 class LocationRepository{
-
+    
     static async createLocation(Location){
         try{
             let sql = `INSERT INTO location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
             const result = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
-            const{affectedRows} = result;
+            const{affectedRows,insertId} = result;
             return{
-                affectedRows
+                affectedRows,
+                insertId
             };
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
