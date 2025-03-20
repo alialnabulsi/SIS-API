@@ -1,7 +1,10 @@
 const Location = require("../models/locationModel");
 const database = require("../config/db");
 require('dotenv').config();
-
+/*
+Assumed here is that each campus has a unique city and we cant have 2 or more campuses in the same city
+so city is considered as a unique key in the table location
+*/
 class LocationRepository{
     
     static async createLocation(Location){
