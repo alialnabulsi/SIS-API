@@ -36,12 +36,17 @@ class LocationController {
 
             const result = await LocationService.updateLocation(city,updates);
 
-            res.status(201).json(result);
+            res.status(204).json(result);
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
             }
-            res.status(500).json({ message: 'Internal server error' , error: e.message});
+            if(e.statusCode === 404){
+                res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
+            }else{
+                res.status(500).json( { message: 'Internal server error'  , error: e.message});
+            }
+            
         }
     }
 }

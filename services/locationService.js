@@ -30,7 +30,7 @@ class LocationService {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in updateLocation service:", e); 
             }
-            throw new Error(e.message || "An error occurred while updating the location.");
+            throw new Error(e.message);
         }
     }
 }

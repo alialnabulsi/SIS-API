@@ -55,11 +55,12 @@ class LocationRepository{
     }
 
     static async updateLocation(city, updates) {
+        if ( ! await this.locationExists(city)){
+            const error = new Error("Location does not exists");
+            error.statusCode = 404; 
+            throw error;
+        }
         try{
-            if (!await this.locationExists(city)) {
-                return { message: "Location does not exist" };
-            }
-    
             if (!updates || Object.keys(updates).length === 0) {
                 return { message: "No updates provided" };
             }
@@ -76,7 +77,7 @@ class LocationRepository{
             sql += conditions.join(", ");
             sql += " WHERE city = ?";
             values.push(city);
-    
+            
             const result = await database.query(sql, values);
             const { affectedRows } = result;
     
@@ -85,12 +86,12 @@ class LocationRepository{
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in updateLocation:", e); 
             }
-            throw new Error(e.sqlMessage || "An error occurred while updating location.");
+            throw new Error(e.sqlMessage);
         }
         
     }
 
-    //for class use
+    //for class use(non memeber)
     static async locationExists(city){
         try{
             let sql = `SELECT * FROM location WHERE city=?`;
