@@ -12,7 +12,11 @@ class LocationController {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
             }
-            res.status(e.statusCode || 500).json({ message: 'Internal server error', error: e.message });
+            if(e.statusCode === 400){
+                res.status(e.statusCode).json( { message: 'Location is already created'  , error: e.message});
+            }else{
+                res.status(500).json( { message: 'Internal server error'  , error: e.message});
+            }
         }
     }
 
@@ -25,7 +29,11 @@ class LocationController {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
             }
-            res.status(e.statusCode || 500).json({ message: 'Internal server error', error: e.message });
+            if(e.statusCode === 404){
+                res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
+            }else{
+                res.status(500).json( { message: 'Internal server error'  , error: e.message});
+            }
         }
     }
 
