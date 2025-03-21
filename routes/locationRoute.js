@@ -1,6 +1,6 @@
 const express = require('express');
 const LocationController = require('../controllers/locationController');
-const { validateLocation,validateCityParam,validateLocationUpdate } = require('../validators/DTO');
+const { validateLocation,validateCityParam,validateLocationUpdate } = require('../validators/locationDTO');
 
 const router = express.Router();
 
