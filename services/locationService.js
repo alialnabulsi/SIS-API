@@ -57,6 +57,17 @@ class LocationService {
         }
     }
     
+    static async deleteAllLocations() {
+        try {
+            return LocationRepository.deleteAllLocations();
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in deleteAllLocations service:", e);
+            }
+            throw new Error(e.message);
+        }
+    }
+    
 }
 
 module.exports=LocationService;

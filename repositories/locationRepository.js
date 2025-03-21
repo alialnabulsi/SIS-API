@@ -128,6 +128,28 @@ class LocationRepository{
             throw new Error(e.sqlMessage);
         }
     }
+
+    static async deleteAllLocations() {
+        try {
+            let sql = `DELETE FROM location`;
+            const result = await database.query(sql);
+            const { affectedRows } = result;
+    
+            if (affectedRows === 0) {
+                const error = new Error("No locations to delete");
+                error.statusCode = 404;
+                throw error;
+            }
+    
+            return { affectedRows };
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in deleteAllLocations:", e);
+            }
+            throw e;
+        }
+    }
+    
     //for class use(non memeber)
     static async locationExists(city){
         try{

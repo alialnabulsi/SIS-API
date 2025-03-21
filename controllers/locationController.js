@@ -93,6 +93,22 @@ class LocationController {
         }
     }
     
+    static async deleteAllLocations(req, res) {
+        try {
+            const result = await LocationService.deleteAllLocations();
+            res.status(200).json(result);
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error(e.message);
+            }
+            if (e.statusCode === 404) {
+                res.status(e.statusCode).json({ message: "No locations found to delete", error: e.message });
+            } else {
+                res.status(500).json({ message: "Internal server error", error: e.message });
+            }
+        }
+    }
+    
 }
 
 module.exports = LocationController;
