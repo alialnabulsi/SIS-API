@@ -109,6 +109,25 @@ class LocationRepository{
         
     }
 
+    static async deleteLocation(city) {
+        if (!await this.locationExists(city)) {
+            const error = new Error("Location does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
+    
+        try {
+            let sql = `DELETE FROM location WHERE city = ?`;
+            const result = await database.query(sql, [city]);
+            const { affectedRows } = result;
+            return { affectedRows };
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in deleteLocation:", e);
+            }
+            throw new Error(e.sqlMessage);
+        }
+    }
     //for class use(non memeber)
     static async locationExists(city){
         try{
