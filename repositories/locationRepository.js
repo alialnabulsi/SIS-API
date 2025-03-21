@@ -89,7 +89,7 @@ class LocationRepository{
     
             for (const key in updates) {
                 conditions.push(`${key} = ?`);
-                values.push(updates[key]);
+                values.push(updates[key]); 
             }
     
             sql += conditions.join(", ");
@@ -165,7 +165,7 @@ class LocationRepository{
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in locationExists:", e);
             }
-            throw new Error(e.sqlMessage || "An error occurred while checking the location.");
+            throw new Error(e.sqlMessage);
         }
     }
 
