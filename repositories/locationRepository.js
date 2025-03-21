@@ -15,7 +15,7 @@ class LocationRepository{
         }
         
         try{
-            let sql = `INSERT INT location 
+            let sql = `INSERT INTO location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
             const result = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
@@ -34,22 +34,22 @@ class LocationRepository{
 
     static async getLocation(city){
         try{
-            if (! await this.locationExists(city)){
-                return {message: "Location does not exist"};
+            if (! await this.locationExists(Location.city)){
+                const error = new Error("Location does not exists");
+                error.statusCode = 404; 
+                throw error;
             }
             let sql = `SELECT * FROM location WHERE city = ?`;
 
-            const [row] = await database.query(sql,city);
-            
-            if (!row || row.length === 0) {
-                return { message: "Location not found" };
-            }
-            return Location.fromRow(row);
+            const [row] = await database.query(sql,[city]);
+            //no need to check row since it is checked in the locationExists
+
+            return Location.fromRow(row[0]);
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in getLocation:", e);
             }
-            throw new Error(e.sqlMessage || "An error occurred while fetching location.");
+            throw new Error(e.sqlMessage);
         }
     }
 
