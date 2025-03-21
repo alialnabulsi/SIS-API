@@ -15,7 +15,7 @@ class LocationRepository{
         }
         
         try{
-            let sql = `INSERT INTO location 
+            let sql = `INSERT INT location 
             (city, zipCode, address)
             VALUES (?,?,?)`;
             const result = await database.query(sql,[Location.city, Location.zipCode, Location.address]);
