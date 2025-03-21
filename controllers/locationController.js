@@ -7,7 +7,7 @@ class LocationController {
             const {city, zipCode, address} = req.body;
             const location = new Location(0,city, zipCode, address);
             const result = await LocationService.createLocation(location);
-            res.status(200).json(result);
+            res.status(201).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
