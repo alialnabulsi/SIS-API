@@ -21,7 +21,7 @@ class LocationController {
             const {city} = req.params;
             const result =  await LocationService.getLocation(city);
             res.status(200).json(result);
-        }catch(e){
+        }catch(e){          
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
             }

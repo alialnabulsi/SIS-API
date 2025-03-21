@@ -33,18 +33,19 @@ class LocationRepository{
     }
 
     static async getLocation(city){
+        if ( ! await this.locationExists(city)){
+            const error = new Error("Location does not exists");
+            error.statusCode = 404; 
+            throw error;
+        }
         try{
-            if (! await this.locationExists(Location.city)){
-                const error = new Error("Location does not exists");
-                error.statusCode = 404; 
-                throw error;
-            }
+            
             let sql = `SELECT * FROM location WHERE city = ?`;
 
             const [row] = await database.query(sql,[city]);
             //no need to check row since it is checked in the locationExists
 
-            return Location.fromRow(row[0]);
+            return Location.fromRow(row);
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in getLocation:", e);
