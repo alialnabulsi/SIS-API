@@ -5,6 +5,7 @@ const { validateLocation,validateCityParam,validateLocationUpdate } = require('.
 const router = express.Router();
 
 router.post('/',validateLocation ,LocationController.createLocation);
+router.get('/' , LocationController.getAllLocations);
 router.get('/:city',validateCityParam, LocationController.getLocation);
 router.put('/:city', validateLocationUpdate,LocationController.updateLocation);
 

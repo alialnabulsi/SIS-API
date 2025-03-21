@@ -54,6 +54,24 @@ class LocationRepository{
         }
     }
 
+    static async getAllLocations(){
+        try{
+            let sql = `SELECT * FROM location`;
+            const row = await database.query(sql);
+            if(!row || row.length === 0){
+                const error = new Error("No locations exist");
+                error.statusCode = 404; 
+                throw error;
+            }
+            return row.map(Location.fromRow);
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in getAllLocation:", e);
+            }
+            throw e;//since the throw of the error that contain the statusCode 404 inside the try we should throw the error it seld here not new one
+        }
+    }
+
     static async updateLocation(city, updates) {
         if ( ! await this.locationExists(city)){
             const error = new Error("Location does not exists");

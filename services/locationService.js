@@ -23,6 +23,18 @@ class LocationService {
             throw new Error(e.message);
         }
     }
+
+    static async getAllLocations() {
+        try {
+            return LocationRepository.getAllLocations();
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in getAllLocation service:", e);
+            }  
+            throw new Error(e.message);
+        }
+    }
+
     static async updateLocation(city, updates) {
         try {
             return LocationRepository.updateLocation(city, updates);
