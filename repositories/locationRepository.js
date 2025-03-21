@@ -7,11 +7,13 @@ In the table Location in the database the city attribute is considered as unique
 class LocationRepository{
     
     static async createLocation(Location){
-        if (! await this.locationExists(Location.city)){
+        
+        if ( await this.locationExists(Location.city)){
             const error = new Error("Location already exists");
             error.statusCode = 400; 
             throw error;
         }
+        
         try{
             let sql = `INSERT INTO location 
             (city, zipCode, address)
@@ -20,7 +22,7 @@ class LocationRepository{
             const{affectedRows,insertId} = result;
             return{
                 affectedRows,
-                insertId
+                insertId: insertId.toString() //since it is BigInt so it cant be serialized
             };
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
@@ -91,9 +93,9 @@ class LocationRepository{
     static async locationExists(city){
         try{
             let sql = `SELECT * FROM location WHERE city=?`;
-            const rows = await database.query(sql,city);
+            const rows = await database.query(sql,[city]);
             //check the rows
-            if(rows && rows.length){
+            if(rows && rows.length > 0){
                 return true;
             }
 
