@@ -20,7 +20,7 @@ class LocationService {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in getLocation service:", e);
             }  
-            throw new Error(e.message || "An error occurred while fetching the location.");
+            throw new Error(e.message);
         }
     }
     static async updateLocation(city, updates) {
