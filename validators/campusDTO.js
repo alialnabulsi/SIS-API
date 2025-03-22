@@ -26,7 +26,7 @@ const validateCampus = [
 ];
 
 // Validate campus name (GET campus by name)
-const validateCampusIDParam = [
+const validateNameParam = [
     param('name')
         .isString()
         .withMessage('Campus name must be a string')
@@ -44,7 +44,7 @@ const validateCampusIDParam = [
     }
 ];
 
-const validateNameParam = [
+const validateCampusIDParam = [
     param('campusId')
         .isInt()
         .withMessage('Campus ID must be a number')
@@ -62,11 +62,13 @@ const validateNameParam = [
 
 // Validate campus update
 const validateCampusUpdate = [
-    param('campusId')
-        .isInt()
-        .withMessage('Campus ID must be a number')
+    param('name')
+        .isString()
+        .withMessage('Campus name must be a string')
         .notEmpty()
-        .withMessage('Campus ID is required'),
+        .withMessage('Campus name is required')
+        .isLength({ min: 3, max: 255 })
+        .withMessage('Campus name must be between 3 and 255 characters'),
 
     param('locationID')
         .isInt({ min: 1 })
