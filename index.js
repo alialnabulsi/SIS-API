@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 
 //Import Routes
 const locationRoute = require('./routes/locationRoute');
+const campusRoute = require('./routes/campusRoute');
+
 
 
 const app = express();
@@ -15,6 +17,8 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/sis/location',locationRoute);
+app.use('/sis/campus',campusRoute);
+
 
 
 // Start the server
