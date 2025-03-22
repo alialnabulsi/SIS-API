@@ -6,7 +6,7 @@ class CampusService {
     static async createCampus(campus) {
         try {
             // Check if the location exists
-            const locationExists = await LocationService.getLocation(campus.locationID);
+            const locationExists = await LocationService.getLocation(campus);
             if (!locationExists) {
                 const error = new Error("Location does not exist");
                 error.statusCode = 404;

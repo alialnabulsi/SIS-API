@@ -24,6 +24,17 @@ class LocationService {
         }
     }
 
+    static async getLocationByID(locationID) {
+        try {
+            return LocationRepository.getLocationByID(locationID);
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Error in getLocationByID service:", e);
+            }  
+            throw new Error(e.message);
+        }
+    }
+
     static async getAllLocations() {
         try {
             return LocationRepository.getAllLocations();

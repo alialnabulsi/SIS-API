@@ -54,6 +54,28 @@ class LocationRepository{
         }
     }
 
+    static async getLocationByID(locationID){
+        if ( ! await this.locationExistsByID(locationID)){
+            const error = new Error("Location does not exists");
+            error.statusCode = 404; 
+            throw error;
+        }
+        try{
+            
+            let sql = `SELECT * FROM location WHERE locationID = ?`;
+
+            const [row] = await database.query(sql,[locationID]);
+            //no need to check row since it is checked in the locationExistsByID
+
+            return Location.fromRow(row);
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in getLocationByID:", e);
+            }
+            throw new Error(e.sqlMessage);
+        }
+    }
+
     static async getAllLocations(){
         try{
             let sql = `SELECT * FROM location`;
@@ -164,6 +186,24 @@ class LocationRepository{
         }catch(e){
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in locationExists:", e);
+            }
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async locationExistsByID(locationID){
+        try{
+            let sql = `SELECT * FROM location WHERE locationID=?`;
+            const rows = await database.query(sql,[locationID]);
+            //check the rows
+            if(rows && rows.length > 0){
+                return true;
+            }
+
+            return false;
+        }catch(e){
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in locationExistsByID:", e);
             }
             throw new Error(e.sqlMessage);
         }

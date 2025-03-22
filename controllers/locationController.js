@@ -37,6 +37,23 @@ class LocationController {
         }
     }
 
+    static async getLocationByID(req,res){
+        try{
+            const {locationID} = req.params;
+            const result =  await LocationService.getLocationByID(locationID);
+            res.status(200).json(result);
+        }catch(e){          
+            if (process.env.NODE_ENV === 'development') {
+                console.error(e.message);
+            }
+            if(e.statusCode === 404){
+                res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
+            }else{
+                res.status(500).json( { message: 'Internal server error'  , error: e.message});
+            }
+        }
+    }
+
     static async getAllLocations(req,res){
         try{
             const result =  await LocationService.getAllLocations();

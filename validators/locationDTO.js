@@ -50,6 +50,20 @@ const validateCityParam = [
     }
 ];
 
+const validateLocationIDParam = [
+    param('locationID')
+        .isInt({ min: 1 }) 
+        .withMessage('Location ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Location ID is required'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
 
 //updateLocation case
  const validateLocationUpdate = [
@@ -85,5 +99,5 @@ const validateCityParam = [
 ];
  
 
- module.exports = {validateLocation,validateCityParam,validateLocationUpdate};
+ module.exports = {validateLocation,validateCityParam,validateLocationUpdate,validateLocationIDParam};
  
