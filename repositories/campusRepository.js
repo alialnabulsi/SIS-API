@@ -2,6 +2,10 @@ const Campus = require("../models/campusModel");
 const database = require("../config/db");
 require('dotenv').config();
 
+/*
+In the table Campus in the database the name attribute is considered as unique key so each campus has a unique name.
+*/
+
 class CampusRepository {
 
     static async createCampus(campus) {
@@ -10,14 +14,15 @@ class CampusRepository {
             error.statusCode = 400;
             throw error;
         }
-
         try {
-            let sql = `INSERT INTO campus (locationID, name) VALUES (?, ?)`;
+            let sql = `INSERT INTO campus 
+            (locationID, name)
+            VALUES (?,?)`;
             const result = await database.query(sql, [campus.locationID, campus.name]);
             const { affectedRows, insertId } = result;
             return {
                 affectedRows,
-                insertId: insertId.toString()
+                insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
@@ -36,9 +41,12 @@ class CampusRepository {
 
         try {
             let sql = `SELECT * FROM campus WHERE name = ?`;
+
             const [row] = await database.query(sql, [name]);
+            // no need to check row since it is checked in the campusExists
 
             return Campus.fromRow(row);
+
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in getCampus:", e);
@@ -50,20 +58,18 @@ class CampusRepository {
     static async getAllCampuses() {
         try {
             let sql = `SELECT * FROM campus`;
-            const rows = await database.query(sql);
-
-            if (!rows || rows.length === 0) {
+            const row = await database.query(sql);
+            if (!row || row.length === 0) {
                 const error = new Error("No campuses exist");
                 error.statusCode = 404;
                 throw error;
             }
-
-            return rows.map(Campus.fromRow);
+            return row.map(Campus.fromRow);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in getAllCampuses:", e);
             }
-            throw e;
+            throw e; // since the throw of the error that contains the statusCode 404 inside the try, we should throw the error itself here, not a new one.
         }
     }
 
@@ -124,12 +130,38 @@ class CampusRepository {
         }
     }
 
+    static async deleteAllCampuses() {
+        try {
+            let sql = `DELETE FROM campus`;
+            const result = await database.query(sql);
+            const { affectedRows } = result;
+
+            if (affectedRows === 0) {
+                const error = new Error("No campuses to delete");
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return { affectedRows };
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in deleteAllCampuses:", e);
+            }
+            throw e;
+        }
+    }
+
+    //for class use (non-member)
     static async campusExists(name) {
         try {
             let sql = `SELECT * FROM campus WHERE name = ?`;
             const rows = await database.query(sql, [name]);
 
-            return rows && rows.length > 0;
+            if (rows && rows.length > 0) {
+                return true;
+            }
+
+            return false;
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in campusExists:", e);
@@ -137,6 +169,7 @@ class CampusRepository {
             throw new Error(e.sqlMessage);
         }
     }
+
 }
 
 module.exports = CampusRepository;
