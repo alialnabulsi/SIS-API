@@ -66,9 +66,9 @@ class BuildingService {
         }
     }
 
-    static async deleteBuilding(buildingID) {
+    static async deleteBuilding(name) {
         try {
-            return BuildingRepository.deleteBuilding(buildingID);
+            return BuildingRepository.deleteBuilding(name);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in deleteBuilding service:", e);

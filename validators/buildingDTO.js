@@ -16,11 +16,12 @@ const validateBuilding = [
         .notEmpty()
         .withMessage('Campus ID is required'),
 
-    body('location')
-        .isString()
-        .withMessage('Location must be a string')
+    body('numberOfFloors')
+        .isInt({ min: 1 })
+        .withMessage('Number of Floors must be a positive integer')
         .notEmpty()
-        .withMessage('Location is required'),
+        .withMessage('Number of Floors is required'),
+
 
     (req, res, next) => {
         const errors = validationResult(req);
@@ -86,6 +87,12 @@ const validateBuildingUpdate = [
         .optional()
         .isInt({ min: 1 })
         .withMessage('Campus ID must be a positive integer'),
+        
+    body('numberOfFloors')
+        .isInt({ min: 1 })
+        .withMessage('Number of Floors must be a positive integer')
+        .notEmpty()
+        .withMessage('Number of Floors is required'),
 
     (req, res, next) => {
         const errors = validationResult(req);

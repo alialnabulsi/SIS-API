@@ -90,8 +90,8 @@ class BuildingController {
 
     static async deleteBuilding(req, res) {
         try {
-            const { buildingID } = req.params;
-            const result = await BuildingService.deleteBuilding(buildingID);
+            const { name } = req.params;
+            const result = await BuildingService.deleteBuilding(name);
             res.status(200).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {

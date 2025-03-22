@@ -95,7 +95,7 @@ class BuildingRepository {
     }
 
     static async updateBuilding(buildingID, updates) {
-        if (!await this.buildingExists(buildingID)) {
+        if (!await this.buildingExistsByID(buildingID)) {
             const error = new Error("Building does not exist");
             error.statusCode = 404;
             throw error;
@@ -131,16 +131,16 @@ class BuildingRepository {
         }
     }
 
-    static async deleteBuilding(buildingID) {
-        if (!await this.buildingExists(buildingID)) {
+    static async deleteBuilding(name) {
+        if (!await this.buildingExists(name)) {
             const error = new Error("Building does not exist");
             error.statusCode = 404;
             throw error;
         }
 
         try {
-            let sql = `DELETE FROM building WHERE buildingID = ?`;
-            const result = await database.query(sql, [buildingID]);
+            let sql = `DELETE FROM building WHERE name = ?`;
+            const result = await database.query(sql, [name]);
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {

@@ -9,7 +9,7 @@ router.get('/:name', validateNameParam, BuildingController.getBuilding);
 router.get('/id/:buildingID', validateBuildingIDParam, BuildingController.getBuildingByID);
 router.get('/', BuildingController.getAllBuildings);
 router.put('/:buildingID', validateBuildingUpdate, BuildingController.updateBuilding);
-router.delete('/:buildingID', validateBuildingIDParam, BuildingController.deleteBuilding);
+router.delete('/:name', validateBuildingIDParam, BuildingController.deleteBuilding);
 router.delete('/', BuildingController.deleteAllBuildings);
 
 module.exports = router;
