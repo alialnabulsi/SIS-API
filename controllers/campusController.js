@@ -22,8 +22,25 @@ class CampusController {
 
     static async getCampus(req, res) {
         try {
+            const { name } = req.params;
+            const result = await CampusService.getCampus(name);
+            res.status(200).json(result);
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error(e.message);
+            }
+            if (e.statusCode === 404) {
+                res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
+            } else {
+                res.status(500).json({ message: 'Internal server error', error: e.message });
+            }
+        }
+    }
+
+    static async getCampusByID(req, res) {
+        try {
             const { campusID } = req.params;
-            const result = await CampusService.getCampus(campusID);
+            const result = await CampusService.getCampusByID(campusID);
             res.status(200).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {

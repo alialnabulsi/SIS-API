@@ -55,6 +55,29 @@ class CampusRepository {
         }
     }
 
+    static async getCampusByID(campusID) {
+        if (!await this.campusExistsByID(campusID)) {
+            const error = new Error("Campus does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        try {
+            let sql = `SELECT * FROM campus WHERE campusID = ?`;
+
+            const [row] = await database.query(sql, [campusID]);
+            // no need to check row since it is checked in the campusExists
+
+            return Campus.fromRow(row);
+
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in getCampusByID:", e);
+            }
+            throw new Error(e.sqlMessage);
+        }
+    }
+
     static async getAllCampuses() {
         try {
             let sql = `SELECT * FROM campus`;
@@ -165,6 +188,24 @@ class CampusRepository {
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Database Error in campusExists:", e);
+            }
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async campusExistsByID(campusID) {
+        try {
+            let sql = `SELECT * FROM campus WHERE campusID = ?`;
+            const rows = await database.query(sql, [campusID]);
+
+            if (rows && rows.length > 0) {
+                return true;
+            }
+
+            return false;
+        } catch (e) {
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Database Error in campusExistsByID:", e);
             }
             throw new Error(e.sqlMessage);
         }
