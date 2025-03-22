@@ -1,19 +1,24 @@
 const CampusRepository = require("../repositories/campusRepository");
-const LocationRepository = require("../repositories/locationRepository");
+const Campus = require("../models/campusModel");
+const LocationService = require("./locationService");
 
 class CampusService {
     static async createCampus(campus) {
         try {
-            // Ensure the associated location exists before creating the campus
-            const locationExists = await LocationRepository.locationExists(campus.city);
+            // Check if the location exists
+            const locationExists = await LocationService.getLocation(campus.locationID);
             if (!locationExists) {
-                throw new Error("Location does not exist");
+                const error = new Error("Location does not exist");
+                error.statusCode = 404;
+                throw error;
             }
+
+            // Proceed with creating the campus if location exists
             return CampusRepository.createCampus(campus);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in createCampus service:", e);
-            }  
+            }
             throw new Error(e.message);
         }
     }
@@ -24,7 +29,7 @@ class CampusService {
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in getCampus service:", e);
-            }  
+            }
             throw new Error(e.message);
         }
     }
@@ -35,7 +40,7 @@ class CampusService {
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in getAllCampuses service:", e);
-            }  
+            }
             throw new Error(e.message);
         }
     }
@@ -45,7 +50,7 @@ class CampusService {
             return CampusRepository.updateCampus(name, updates);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateCampus service:", e); 
+                console.error("Error in updateCampus service:", e);
             }
             throw new Error(e.message);
         }
@@ -61,7 +66,7 @@ class CampusService {
             throw new Error(e.message);
         }
     }
-    
+
     static async deleteAllCampuses() {
         try {
             return CampusRepository.deleteAllCampuses();
