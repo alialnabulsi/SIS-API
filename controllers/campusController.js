@@ -72,9 +72,9 @@ class CampusController {
 
     static async updateCampus(req, res) {
         try {
-            const { campusID } = req.params;
+            const { name } = req.params;
             const updates = req.body;
-            const result = await CampusService.updateCampus(campusID, updates);
+            const result = await CampusService.updateCampus(name, updates);
             res.status(204).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
@@ -90,8 +90,8 @@ class CampusController {
 
     static async deleteCampus(req, res) {
         try {
-            const { campusID } = req.params;
-            const result = await CampusService.deleteCampus(campusID);
+            const { name } = req.params;
+            const result = await CampusService.deleteCampus(name);
             res.status(200).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
