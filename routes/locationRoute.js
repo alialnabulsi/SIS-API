@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/',validateLocation ,LocationController.createLocation);
 router.get('/' , LocationController.getAllLocations);
 router.get('/:city',validateCityParam, LocationController.getLocation);
-router.get('/:locationID',validatelocationIDParam, LocationController.getLocationByID);
+router.get('/id/:locationID',validatelocationIDParam, LocationController.getLocationByID);
 router.put('/:city', validateLocationUpdate,LocationController.updateLocation);
 router.delete('/:city', validateCityParam,LocationController.deleteLocation );
 router.delete('/', LocationController.deleteAllLocations) 
