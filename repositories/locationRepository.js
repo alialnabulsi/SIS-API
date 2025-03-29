@@ -7,10 +7,10 @@ In the table Location in the database the city attribute is considered as unique
 class LocationRepository{
     
     static async createLocation(Location){
-        
+        /// Rule: we cant have to campuses at the same location/city that is why the city is unique
         if ( await this.locationExists(Location.city)){
             const error = new Error("Location already exists");
-            error.statusCode = 400; 
+            error.statusCode = 409;//it is already exists
             throw error;
         }
         
@@ -104,6 +104,10 @@ class LocationRepository{
             if (!updates || Object.keys(updates).length === 0) {
                 return { message: "No updates provided" };
             }
+
+            if (updates.city) {
+                delete updates.city;
+            }
     
             let sql = "UPDATE location SET ";
             let conditions = [];
@@ -112,6 +116,13 @@ class LocationRepository{
             for (const key in updates) {
                 conditions.push(`${key} = ?`);
                 values.push(updates[key]); 
+            }
+
+            // If no valid fields remain to update, return an appropriate message
+            if (conditions.length === 0) {
+                const error = new Error("No valid fields to update");
+                error.statusCode = 400; 
+                throw error;
             }
     
             sql += conditions.join(", ");

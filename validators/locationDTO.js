@@ -12,6 +12,8 @@ const {body, param, validationResult} = require('express-validator');
      body('zipCode')
          .isString()
          .withMessage('Zip Code must be a string')
+         .notEmpty()
+         .withMessage('Zip Code is required')
          .isLength({max:255})
          .withMessage('Zip Code must not be longer than 255 characters'),
      body('address')

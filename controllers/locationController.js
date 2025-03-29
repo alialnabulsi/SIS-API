@@ -12,7 +12,7 @@ class LocationController {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
             }
-            if(e.statusCode === 400){
+            if(e.statusCode === 409){
                 res.status(e.statusCode).json( { message: 'Location is already created'  , error: e.message});
             }else{
                 res.status(500).json( { message: 'Internal server error'  , error: e.message});
@@ -85,6 +85,8 @@ class LocationController {
             }
             if(e.statusCode === 404){
                 res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
+            }else if (e.statusCode === 400) {
+                res.status(e.statusCode).json( { message: 'No valid updates'  , error: e.message});
             }else{
                 res.status(500).json( { message: 'Internal server error'  , error: e.message});
             }
@@ -97,7 +99,7 @@ class LocationController {
             const { city } = req.params;
             const result = await LocationService.deleteLocation(city);
     
-            res.status(200).json(result);
+            res.status(204).json(result);
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
@@ -113,7 +115,7 @@ class LocationController {
     static async deleteAllLocations(req, res) {
         try {
             const result = await LocationService.deleteAllLocations();
-            res.status(200).json(result);
+            res.status(204).json(result);//no content status code means that the server deleted succ
         } catch (e) {
             if (process.env.NODE_ENV === 'development') {
                 console.error(e.message);
