@@ -7,7 +7,7 @@ const pool = database.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    connectionLimit: 100
+    connectionLimit: 10
 });
 
 module.exports = pool; // export the pool to avoid repetition of intiating a connection
