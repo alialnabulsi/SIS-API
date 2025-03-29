@@ -5,10 +5,7 @@ class LocationService {
     static async createLocation(Location) {
         try {
             return LocationRepository.createLocation(Location);
-        } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createLocation service:", e);
-            }  
+        } catch (e) { 
             throw new Error(e.message);
         }
 
@@ -16,10 +13,7 @@ class LocationService {
     static async getLocation(city) {
         try {
             return LocationRepository.getLocation(city);
-        } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getLocation service:", e);
-            }  
+        } catch (e) { 
             throw new Error(e.message);
         }
     }
@@ -28,9 +22,6 @@ class LocationService {
         try {
             return LocationRepository.getLocationByID(locationID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getLocationByID service:", e);
-            }  
             throw new Error(e.message);
         }
     }
@@ -38,10 +29,7 @@ class LocationService {
     static async getAllLocations() {
         try {
             return LocationRepository.getAllLocations();
-        } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllLocation service:", e);
-            }  
+        } catch (e) { 
             throw new Error(e.message);
         }
     }
@@ -50,9 +38,6 @@ class LocationService {
         try {
             return LocationRepository.updateLocation(city, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateLocation service:", e); 
-            }
             throw new Error(e.message);
         }
     }
@@ -61,9 +46,6 @@ class LocationService {
         try {
             return LocationRepository.deleteLocation(city);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteLocation service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -72,9 +54,6 @@ class LocationService {
         try {
             return LocationRepository.deleteAllLocations();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllLocations service:", e);
-            }
             throw new Error(e.message);
         }
     }

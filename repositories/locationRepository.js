@@ -25,9 +25,6 @@ class LocationRepository{
                 insertId: insertId.toString() //since it is BigInt so it cant be serialized
             };
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createLocation:", e); 
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -47,9 +44,6 @@ class LocationRepository{
 
             return Location.fromRow(row);
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getLocation:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -69,9 +63,6 @@ class LocationRepository{
 
             return Location.fromRow(row);
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getLocationByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -86,29 +77,31 @@ class LocationRepository{
                 throw error;
             }
             return row.map(Location.fromRow);
-        }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllLocation:", e);
-            }
+        }catch(e){   
             throw e;//since the throw of the error that contain the statusCode 404 inside the try we should throw the error it seld here not new one
         }
     }
 
     static async updateLocation(city, updates) {
+        //check if city params exists
         if ( ! await this.locationExists(city)){
             const error = new Error("Location does not exists");
             error.statusCode = 404; 
             throw error;
         }
+        //remove city in body if exists to prevent updating the city name which is unique
+        if (updates.city) {
+            delete updates.city;
+        }
+        //check if there is still updates to do (zipCode / address)
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        
         try{
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
-
-            if (updates.city) {
-                delete updates.city;
-            }
-    
+            
             let sql = "UPDATE location SET ";
             let conditions = [];
             let values = [];
@@ -116,13 +109,6 @@ class LocationRepository{
             for (const key in updates) {
                 conditions.push(`${key} = ?`);
                 values.push(updates[key]); 
-            }
-
-            // If no valid fields remain to update, return an appropriate message
-            if (conditions.length === 0) {
-                const error = new Error("No valid fields to update");
-                error.statusCode = 400; 
-                throw error;
             }
     
             sql += conditions.join(", ");
@@ -134,10 +120,7 @@ class LocationRepository{
     
             return { affectedRows };
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateLocation:", e); 
-            }
-            throw new Error(e.sqlMessage);
+            throw new Error(e);
         }
         
     }
@@ -155,9 +138,6 @@ class LocationRepository{
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteLocation:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -176,9 +156,6 @@ class LocationRepository{
     
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllLocations:", e);
-            }
             throw e;
         }
     }
@@ -195,9 +172,6 @@ class LocationRepository{
 
             return false;
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in locationExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -213,9 +187,6 @@ class LocationRepository{
 
             return false;
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in locationExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

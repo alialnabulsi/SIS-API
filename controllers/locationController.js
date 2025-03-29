@@ -9,9 +9,6 @@ class LocationController {
             const result = await LocationService.createLocation(location);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if(e.statusCode === 409){
                 res.status(e.statusCode).json( { message: 'Location is already created'  , error: e.message});
             }else{
@@ -26,9 +23,6 @@ class LocationController {
             const result =  await LocationService.getLocation(city);
             res.status(200).json(result);
         }catch(e){          
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if(e.statusCode === 404){
                 res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
             }else{
@@ -43,9 +37,6 @@ class LocationController {
             const result =  await LocationService.getLocationByID(locationID);
             res.status(200).json(result);
         }catch(e){          
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if(e.statusCode === 404){
                 res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
             }else{
@@ -59,9 +50,6 @@ class LocationController {
             const result =  await LocationService.getAllLocations();
             res.status(200).json(result);
         }catch(e){          
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if(e.statusCode === 404){
                 res.status(e.statusCode).json( { message: 'No locations found'  , error: e.message});
             }else{
@@ -80,9 +68,6 @@ class LocationController {
 
             res.status(204).json(result);
         }catch(e){
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if(e.statusCode === 404){
                 res.status(e.statusCode).json( { message: 'Location not found'  , error: e.message});
             }else if (e.statusCode === 400) {
@@ -101,9 +86,6 @@ class LocationController {
     
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: "Location not found", error: e.message });
             } else {
@@ -117,9 +99,6 @@ class LocationController {
             const result = await LocationService.deleteAllLocations();
             res.status(204).json(result);//no content status code means that the server deleted succ
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: "No locations found to delete", error: e.message });
             } else {
