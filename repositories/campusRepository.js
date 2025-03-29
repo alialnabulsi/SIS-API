@@ -92,7 +92,7 @@ class CampusRepository {
         }
 
         if (updates.name) {
-            delete updates.city;
+            delete updates.name;
         }
 
         if (!updates || Object.keys(updates).length === 0) {
@@ -100,7 +100,6 @@ class CampusRepository {
             error.statusCode = 400; 
             throw error;
         }
-
         try {
 
             let sql = "UPDATE campus SET ";
@@ -121,7 +120,7 @@ class CampusRepository {
 
             return { affectedRows };
         } catch (e) {
-            throw new Error(e.sqlMessage);
+            throw new Error(e);
         }
     }
 

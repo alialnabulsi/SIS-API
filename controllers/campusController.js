@@ -9,8 +9,10 @@ class CampusController {
             const result = await CampusService.createCampus(campus);
             res.status(201).json(result);
         } catch (e) {
-            if (e.statusCode === 409) {
+            if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Location does not exist', error: e.message });
+            }else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Campus already exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
@@ -63,11 +65,14 @@ class CampusController {
             const { name } = req.params;
             const updates = req.body;
             const result = await CampusService.updateCampus(name, updates);
+
             res.status(204).json(result);
         } catch (e) {
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
-            } else {
+            } else if (e.statusCode === 400) {
+                res.status(e.statusCode).json( { message: 'No valid updates'  , error: e.message});
+            }else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
         }

@@ -2,8 +2,8 @@ const { body, param, validationResult } = require('express-validator');
 
 // Validate campus creation
 const validateCampus = [
-    param('locationID')
-        .isInt({ min: 1 })
+    body('locationID')
+        .isInt({ min: 0 })
         .withMessage('Location ID must be a positive integer')
         .notEmpty()
         .withMessage('Location ID is required'),
@@ -71,6 +71,7 @@ const validateCampusUpdate = [
         .withMessage('Campus name must be between 3 and 255 characters'),
 
     body('locationID')
+        .optional()
         .isInt({ min: 1 })
         .withMessage('Location ID must be a positive integer')
         .notEmpty()

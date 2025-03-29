@@ -4,15 +4,14 @@ const LocationService = require("./locationService");
 
 class CampusService {
     static async createCampus(campus) {
+        // Check if the location exists
+        const locationExists = await LocationService.getLocationByID(campus.locationID);
+        if (!locationExists) {
+            const error = new Error("Location does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
         try {
-            // Check if the location exists
-            const locationExists = await LocationService.getLocationByID(campus.locationID);
-            if (!locationExists) {
-                const error = new Error("Location does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return CampusRepository.createCampus(campus);
         } catch (e) {
             throw new Error(e.message);
@@ -44,19 +43,20 @@ class CampusService {
     }
 
     static async updateCampus(name, updates) {
-        try {
-            // Check if the location exists
-            if (updates.locationID) {
-                const locationExists = await LocationService.getLocationByID(updates.locationID);
-                if (!locationExists) {
-                    const error = new Error("Location does not exist");
-                    error.statusCode = 404;
-                    throw error;
-                }
+        // Check if the location exists
+
+        if (updates.locationID) {
+            const locationExists = await LocationService.getLocationByID(updates.locationID);
+            if (!locationExists) {
+                const error = new Error("Location does not exist");
+                error.statusCode = 404;
+                throw error;
             }
+        }
+        try {
             return CampusRepository.updateCampus(name, updates);
         } catch (e) {
-            throw new Error(e.message);
+            throw new Error(e);
         }
     }
 
