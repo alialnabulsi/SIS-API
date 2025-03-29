@@ -9,10 +9,7 @@ class CampusController {
             const result = await CampusService.createCampus(campus);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 400) {
+            if (e.statusCode === 409) {
                 res.status(e.statusCode).json({ message: 'Location does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -26,9 +23,6 @@ class CampusController {
             const result = await CampusService.getCampus(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
             } else {
@@ -43,9 +37,6 @@ class CampusController {
             const result = await CampusService.getCampusByID(campusID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
             } else {
@@ -59,9 +50,6 @@ class CampusController {
             const result = await CampusService.getAllCampuses();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No campuses found', error: e.message });
             } else {
@@ -77,9 +65,6 @@ class CampusController {
             const result = await CampusService.updateCampus(name, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
             } else {
@@ -94,9 +79,6 @@ class CampusController {
             const result = await CampusService.deleteCampus(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus not found', error: e.message });
             } else {
@@ -110,9 +92,6 @@ class CampusController {
             const result = await CampusService.deleteAllCampuses();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No campuses found to delete', error: e.message });
             } else {

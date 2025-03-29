@@ -45,7 +45,7 @@ const validateNameParam = [
 ];
 
 const validateCampusIDParam = [
-    param('campusId')
+    param('campusID')
         .isInt()
         .withMessage('Campus ID must be a number')
         .notEmpty()
@@ -70,19 +70,11 @@ const validateCampusUpdate = [
         .isLength({ min: 3, max: 255 })
         .withMessage('Campus name must be between 3 and 255 characters'),
 
-    param('locationID')
+    body('locationID')
         .isInt({ min: 1 })
         .withMessage('Location ID must be a positive integer')
         .notEmpty()
         .withMessage('Location ID is required'),
-
-    body('name')
-        .optional()
-        .isString()
-        .withMessage('Campus name must be a string')
-        .isLength({ min: 3, max: 255 })
-        .withMessage('Campus name must be between 3 and 255 characters'),
-
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

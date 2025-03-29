@@ -11,7 +11,7 @@ class CampusRepository {
     static async createCampus(campus) {
         if (await this.campusExists(campus.name)) {
             const error = new Error("Campus already exists");
-            error.statusCode = 400;
+            error.statusCode = 409;
             throw error;
         }
         try {
@@ -25,9 +25,6 @@ class CampusRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createCampus:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -48,9 +45,6 @@ class CampusRepository {
             return Campus.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getCampus:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -71,9 +65,6 @@ class CampusRepository {
             return Campus.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getCampusByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -89,9 +80,6 @@ class CampusRepository {
             }
             return row.map(Campus.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllCampuses:", e);
-            }
             throw e; // since the throw of the error that contains the statusCode 404 inside the try, we should throw the error itself here, not a new one.
         }
     }
@@ -103,10 +91,17 @@ class CampusRepository {
             throw error;
         }
 
+        if (updates.name) {
+            delete updates.city;
+        }
+
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE campus SET ";
             let conditions = [];
@@ -126,9 +121,6 @@ class CampusRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateCampus:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -146,9 +138,6 @@ class CampusRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteCampus:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -167,9 +156,6 @@ class CampusRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllCampuses:", e);
-            }
             throw e;
         }
     }
@@ -186,9 +172,6 @@ class CampusRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in campusExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -204,9 +187,6 @@ class CampusRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in campusExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
