@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const cors = require('cors'); //to handle requests from different domains
+const bodyParser = require('body-parser'); //for converting to json objects
 
 //Import Routes
 const adminRoute = require('./routes/adminRoute');
@@ -42,34 +42,34 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Use Routes
-app.use('/api/admin', adminRoute);
-app.use('/api/advisor', advisorRoute);
-app.use('/api/building', buildingRoute);
-app.use('/api/campus', campusRoute);
-app.use('/api/course-program', courseProgramRoute);
-app.use('/api/course', courseRoute);
-app.use('/api/department', departmentRoute);
-app.use('/api/enrollment', enrollmentRoute);
-app.use('/api/faculty', facultyRoute);
-app.use('/api/final-exam', finalExamRoute);
-app.use('/api/final-exam-schedule', finalExamScheduleRoute);
-app.use('/api/hold', holdRoute);
-app.use('/api/instructor', instructorRoute);
-app.use('/api/location', locationRoute);
-app.use('/api/major', majorRoute);
-app.use('/api/minor', minorRoute);
-app.use('/api/phone-number', phoneNumberRoute);
-app.use('/api/prerequisite', prerequisiteRoute);
-app.use('/api/program', programRoute);
-app.use('/api/role', roleRoute);
-app.use('/api/room', roomRoute);
-app.use('/api/schedule', scheduleRoute);
-app.use('/api/section', sectionRoute);
-app.use('/api/semester', semesterRoute);
-app.use('/api/student-hold', studentHoldRoute);
-app.use('/api/student', studentRoute);
-app.use('/api/user-role', userRoleRoute);
-app.use('/api/user', userRoute);
+app.use('/api/sis/admin', adminRoute);
+app.use('/api/sis/advisor', advisorRoute);
+app.use('/api/sis/building', buildingRoute);
+app.use('/api/sis/campus', campusRoute);
+app.use('/api/sis/course-program', courseProgramRoute);
+app.use('/api/sis/course', courseRoute);
+app.use('/api/sis/department', departmentRoute);
+app.use('/api/sis/enrollment', enrollmentRoute);
+app.use('/api/sis/faculty', facultyRoute);
+app.use('/api/sis/final-exam', finalExamRoute);
+app.use('/api/sis/final-exam-schedule', finalExamScheduleRoute);
+app.use('/api/sis/hold', holdRoute);
+app.use('/api/sis/instructor', instructorRoute);
+app.use('/api/sis/location', locationRoute);
+app.use('/api/sis/major', majorRoute);
+app.use('/api/sis/minor', minorRoute);
+app.use('/api/sis/phone-number', phoneNumberRoute);
+app.use('/api/sis/prerequisite', prerequisiteRoute);
+app.use('/api/sis/program', programRoute);
+app.use('/api/sis/role', roleRoute);
+app.use('/api/sis/room', roomRoute);
+app.use('/api/sis/schedule', scheduleRoute);
+app.use('/api/sis/section', sectionRoute);
+app.use('/api/sis/semester', semesterRoute);
+app.use('/api/sis/student-hold', studentHoldRoute);
+app.use('/api/sis/student', studentRoute);
+app.use('/api/sis/user-role', userRoleRoute);
+app.use('/api/sis/user', userRoute);
 
 
 
