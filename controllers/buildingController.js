@@ -74,7 +74,7 @@ class BuildingController {
             } else if (e.statusCode === 404) {
                 const message = e.campusNotFound
                     ? 'Campus not found'  // If campusNotFound is true
-                    : 'Building not found'; // If campusNotFound is false
+                    : 'Building not found'; 
                 res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });

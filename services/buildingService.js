@@ -1,11 +1,11 @@
 const BuildingRepository = require("../repositories/buildingRepository");
 const Building = require("../models/buildingModel");
-const CampusService = require("./campusService");
+const CampusRepository = require("../repositories/campusRepository");
 
 class BuildingService {
     static async createBuilding(building) {
         // Check if the campus exists
-        const campusExists = await CampusService.getCampusByID(building.campusID);
+        const campusExists = await CampusRepository.campusExistsByID(building.campusID);
         if (!campusExists) {
             const error = new Error("Campus does not exist");
             error.statusCode = 404;
@@ -44,9 +44,9 @@ class BuildingService {
 
     static async updateBuilding(name, updates) {
         // Check if the campus exists
-
         if (updates.campusID) {
-            const campusExists = await CampusService.getCampusByID(updates.campusID);
+            const campusExists = await CampusRepository.campusExistsByID(updates.campusID);
+
             if (!campusExists) {
                 const error = new Error("campus does not exist");
                 error.statusCode = 404;

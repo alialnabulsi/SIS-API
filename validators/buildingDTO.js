@@ -72,7 +72,8 @@ const validateNameParam = [
 const validateBuildingUpdate = [
 
     param('name')
-        .optional()
+        .notEmpty()
+        .withMessage('Building name is required')
         .isString()
         .withMessage('Building name must be a string')
         .isLength({ min: 3, max: 255 })
@@ -89,6 +90,7 @@ const validateBuildingUpdate = [
         .withMessage('Campus ID must be a positive integer'),
 
     body('numberOfFloors')
+        .optional()
         .isInt({ min: 1 })
         .withMessage('Number of Floors must be a positive integer')
         .notEmpty()
