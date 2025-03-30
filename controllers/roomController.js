@@ -9,10 +9,9 @@ class RoomController {
             const result = await RoomService.createRoom(room);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Room already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Building does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -26,9 +25,6 @@ class RoomController {
             const result = await RoomService.getRoom(roomNumber);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Room not found', error: e.message });
             } else {
@@ -43,9 +39,6 @@ class RoomController {
             const result = await RoomService.getRoomByID(roomID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Room not found', error: e.message });
             } else {
@@ -59,9 +52,6 @@ class RoomController {
             const result = await RoomService.getAllRooms();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No rooms found', error: e.message });
             } else {
@@ -72,16 +62,20 @@ class RoomController {
 
     static async updateRoom(req, res) {
         try {
-            const { roomID } = req.params;
+            const { roomNumber } = req.params;
             const updates = req.body;
-            const result = await RoomService.updateRoom(roomID, updates);
+            const result = await RoomService.updateRoom(roomNumber, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Room not found', error: e.message });
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Room number already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                const message = e.buildingNotFound
+                    ? 'Buiding not found'
+                    : 'Room not found'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }

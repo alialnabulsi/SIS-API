@@ -96,7 +96,7 @@ class BuildingRepository {
             throw error;
         }
         //if yes check if there is a city name update then check if the update value is valid and unique
-        if (updates.name  && updates.name !== name) {
+        if (updates.name  && updates.name.toLowerCase() !== name.toLowerCase()) {
             if (await this.buildingExists(updates.name)) {
                 const error = new Error("The new Building name already exists");
                 error.statusCode = 409;

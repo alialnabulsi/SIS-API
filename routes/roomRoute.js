@@ -8,7 +8,7 @@ router.post('/', validateRoom, RoomController.createRoom);
 router.get('/:roomNumber', validateRoomNumberParam, RoomController.getRoom);
 router.get('/id/:roomID', validateRoomIDParam, RoomController.getRoomByID);
 router.get('/', RoomController.getAllRooms);
-router.put('/:roomID', validateRoomUpdate, RoomController.updateRoom);
+router.put('/:roomNumber', validateRoomUpdate, RoomController.updateRoom);
 router.delete('/:roomNumber', validateRoomNumberParam, RoomController.deleteRoom);
 router.delete('/', RoomController.deleteAllRooms);
 

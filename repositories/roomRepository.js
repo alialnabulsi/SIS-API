@@ -5,6 +5,11 @@ require('dotenv').config();
 class RoomRepository {
 
     static async createRoom(room) {
+        if (await this.roomExists(room.roomNumber)) {
+            const error = new Error("Room already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO room 
             (buildingID, roomNumber, type, capacity)
@@ -16,9 +21,6 @@ class RoomRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createRoom:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -33,18 +35,9 @@ class RoomRepository {
             let sql = `SELECT * FROM room WHERE roomNumber = ?`;
 
             const [row] = await database.query(sql, [roomNumber]);
-            if (!row) {
-                const error = new Error("Room does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Room.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getRoom:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -60,14 +53,11 @@ class RoomRepository {
             let sql = `SELECT * FROM room WHERE roomID = ?`;
 
             const [row] = await database.query(sql, [roomID]);
-            // no need to check row since it is checked in the roomExists
+            
 
             return Room.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getRoomByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -83,24 +73,31 @@ class RoomRepository {
             }
             return row.map(Room.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllRooms:", e);
-            }
             throw e;
         }
     }
 
-    static async updateRoom(roomID, updates) {
-        if (!await this.roomExistsByID(roomID)) {
+    static async updateRoom(roomNumber, updates) {
+        if (!await this.roomExists(roomNumber)) {
             const error = new Error("Room does not exist");
             error.statusCode = 404;
+            error.buildingNotFound = false;
             throw error;
+        }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.roomNumber  && updates.roomNumber.toLowerCase() !== roomNumber.toLowerCase()) {
+            if (await this.roomExists(updates.roomNumber)) {
+                const error = new Error("The new Room number already exists");
+                error.statusCode = 409;
+                throw error;
+            }
         }
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE room SET ";
             let conditions = [];
@@ -112,17 +109,14 @@ class RoomRepository {
             }
 
             sql += conditions.join(", ");
-            sql += " WHERE roomID = ?";
-            values.push(roomID);
+            sql += " WHERE roomNumber = ?";
+            values.push(roomNumber);
 
             const result = await database.query(sql, values);
             const { affectedRows } = result;
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateRoom:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

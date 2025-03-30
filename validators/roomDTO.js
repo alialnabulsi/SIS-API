@@ -77,11 +77,13 @@ const validateRoomNumberParam = [
 
 // Validate room update
 const validateRoomUpdate = [
-    param('roomID')
-        .isInt({ min: 1 })
-        .withMessage('Room ID must be a positive integer')
+    param('roomNumber')
         .notEmpty()
-        .withMessage('Room ID is required'),
+        .withMessage('Room number is required')
+        .isString()
+        .withMessage('Room number must be a string')
+        .isLength({ min: 1, max: 16 })
+        .withMessage('Room number must be between 1 and 16 characters'),
 
     body('roomNumber')
         .optional()

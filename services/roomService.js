@@ -1,12 +1,12 @@
 const RoomRepository = require("../repositories/roomRepository");
 const Room = require("../models/roomModel");
-const BuildingService = require("./buildingService");
+const BuildingRepository = require("../repositories/buildingRepository");
 
 class RoomService {
     static async createRoom(room) {
         try {
             // Check if the building exists
-            const buildingExists = await BuildingService.getBuildingByID(room.buildingID);
+            const buildingExists = await BuildingRepository.buildingExistsByID(room.buildingID);
             if (!buildingExists) {
                 const error = new Error("Building does not exist");
                 error.statusCode = 404;
@@ -15,9 +15,6 @@ class RoomService {
 
             return RoomRepository.createRoom(room);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createRoom service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -26,9 +23,6 @@ class RoomService {
         try {
             return RoomRepository.getRoom(roomNumber);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getRoom service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -37,9 +31,6 @@ class RoomService {
         try {
             return RoomRepository.getRoomByID(roomID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getRoomByID service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -48,20 +39,25 @@ class RoomService {
         try {
             return RoomRepository.getAllRooms();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllRooms service:", e);
-            }
             throw new Error(e.message);
         }
     }
 
-    static async updateRoom(roomID, updates) {
-        try {
-            return RoomRepository.updateRoom(roomID, updates);
-        } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateRoom service:", e);
+    static async updateRoom(roomNumber, updates) {
+        if (updates.roomBuildingID) {
+            const buildingExists = await BuildingRepository.buildingExistsByID(updates.buildingID);
+            
+            if (!buildingExists) {
+                const error = new Error("Building does not exist");
+                error.statusCode = 404;
+                error.buildingNotFound = true;
+                throw error;
             }
+        }
+
+        try {
+            return RoomRepository.updateRoom(roomNumber, updates);
+        } catch (e) {
             throw new Error(e.message);
         }
     }
