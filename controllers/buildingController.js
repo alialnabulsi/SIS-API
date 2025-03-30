@@ -9,10 +9,9 @@ class BuildingController {
             const result = await BuildingService.createBuilding(building);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Building already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Campus does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -26,9 +25,6 @@ class BuildingController {
             const result = await BuildingService.getBuilding(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Building not found', error: e.message });
             } else {
@@ -43,9 +39,6 @@ class BuildingController {
             const result = await BuildingService.getBuildingByID(buildingID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Building not found', error: e.message });
             } else {
@@ -59,9 +52,6 @@ class BuildingController {
             const result = await BuildingService.getAllBuildings();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No buildings found', error: e.message });
             } else {
@@ -72,16 +62,20 @@ class BuildingController {
 
     static async updateBuilding(req, res) {
         try {
-            const { buildingID } = req.params;
+            const { name } = req.params;
             const updates = req.body;
-            const result = await BuildingService.updateBuilding(buildingID, updates);
+            const result = await BuildingService.updateBuilding(name, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Building not found', error: e.message });
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Building name already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                const message = e.campusNotFound
+                    ? 'Campus not found'  // If campusNotFound is true
+                    : 'Building not found'; // If campusNotFound is false
+                res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
@@ -94,9 +88,6 @@ class BuildingController {
             const result = await BuildingService.deleteBuilding(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Building not found', error: e.message });
             } else {
@@ -110,9 +101,6 @@ class BuildingController {
             const result = await BuildingService.deleteAllBuildings();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No buildings found to delete', error: e.message });
             } else {

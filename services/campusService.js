@@ -44,7 +44,6 @@ class CampusService {
 
     static async updateCampus(name, updates) {
         // Check if the location exists
-
         if (updates.locationID) {
             const locationExists = await LocationService.getLocationByID(updates.locationID);
             if (!locationExists) {

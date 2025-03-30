@@ -9,6 +9,11 @@ In the table Building, campusID is a foreign key, linking each building to a spe
 class BuildingRepository {
 
     static async createBuilding(building) {
+        if (await this.buildingExists(building.name)) {
+            const error = new Error("Building already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO building 
             (campusID, name, numberOfFloors)
@@ -20,9 +25,6 @@ class BuildingRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createBuilding:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -37,18 +39,9 @@ class BuildingRepository {
             let sql = `SELECT * FROM building WHERE name = ?`;
 
             const [row] = await database.query(sql, [name]);
-            if (!row) {
-                const error = new Error("Building does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Building.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getBuildingByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -69,9 +62,6 @@ class BuildingRepository {
             return Building.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getBuilding:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -87,24 +77,34 @@ class BuildingRepository {
             }
             return row.map(Building.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllBuildings:", e);
-            }
             throw e;
         }
     }
 
-    static async updateBuilding(buildingID, updates) {
-        if (!await this.buildingExistsByID(buildingID)) {
+    static async updateBuilding(name, updates) {
+        //check the building to be updated exists by name
+        if (!await this.buildingExists(name)) {
             const error = new Error("Building does not exist");
             error.statusCode = 404;
+            error.campusNotFound = false;
             throw error;
         }
-
-        try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
+        //if yes check if there is updates
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        //if yes check if there is a city name update then check if the update value is valid and unique
+        if (updates.name  && updates.name !== name) {
+            if (await this.buildingExists(updates.name)) {
+                const error = new Error("The new Building name already exists");
+                error.statusCode = 409;
+                throw error;
             }
+        }
+        //if yes do the update
+        try {
 
             let sql = "UPDATE building SET ";
             let conditions = [];
@@ -116,17 +116,14 @@ class BuildingRepository {
             }
 
             sql += conditions.join(", ");
-            sql += " WHERE buildingID = ?";
-            values.push(buildingID);
+            sql += " WHERE name = ?";
+            values.push(name);
 
             const result = await database.query(sql, values);
             const { affectedRows } = result;
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateBuilding:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -165,9 +162,6 @@ class BuildingRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllBuildings:", e);
-            }
             throw e;
         }
     }

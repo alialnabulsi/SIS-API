@@ -8,8 +8,8 @@ router.post('/', validateBuilding, BuildingController.createBuilding);
 router.get('/:name', validateNameParam, BuildingController.getBuilding);
 router.get('/id/:buildingID', validateBuildingIDParam, BuildingController.getBuildingByID);
 router.get('/', BuildingController.getAllBuildings);
-router.put('/:buildingID', validateBuildingUpdate, BuildingController.updateBuilding);
-router.delete('/:name', validateBuildingIDParam, BuildingController.deleteBuilding);
+router.put('/:name', validateBuildingUpdate, BuildingController.updateBuilding);
+router.delete('/:name', validateNameParam, BuildingController.deleteBuilding);
 router.delete('/', BuildingController.deleteAllBuildings);
 
 module.exports = router;

@@ -70,24 +70,24 @@ const validateNameParam = [
 
 // Validate building update
 const validateBuildingUpdate = [
-    param('buildingID')
-        .isInt({ min: 1 })
-        .withMessage('Building ID must be a positive integer')
-        .notEmpty()
-        .withMessage('Building ID is required'),
 
+    param('name')
+        .optional()
+        .isString()
+        .withMessage('Building name must be a string')
+        .isLength({ min: 3, max: 255 })
+        .withMessage('Building name must be between 3 and 255 characters'),
     body('name')
         .optional()
         .isString()
         .withMessage('Building name must be a string')
         .isLength({ min: 3, max: 255 })
         .withMessage('Building name must be between 3 and 255 characters'),
-
     body('campusID')
         .optional()
         .isInt({ min: 1 })
         .withMessage('Campus ID must be a positive integer'),
-        
+
     body('numberOfFloors')
         .isInt({ min: 1 })
         .withMessage('Number of Floors must be a positive integer')
