@@ -4,15 +4,14 @@ const BuildingRepository = require("../repositories/buildingRepository");
 
 class RoomService {
     static async createRoom(room) {
+        // Check if the building exists
+        const buildingExists = await BuildingRepository.buildingExistsByID(room.buildingID);
+        if (!buildingExists) {
+            const error = new Error("Building does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
         try {
-            // Check if the building exists
-            const buildingExists = await BuildingRepository.buildingExistsByID(room.buildingID);
-            if (!buildingExists) {
-                const error = new Error("Building does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return RoomRepository.createRoom(room);
         } catch (e) {
             throw new Error(e.message);
@@ -44,10 +43,11 @@ class RoomService {
     }
 
     static async updateRoom(roomNumber, updates) {
-        if (updates.roomBuildingID) {
+        if (updates.buildingID) {
             const buildingExists = await BuildingRepository.buildingExistsByID(updates.buildingID);
             
             if (!buildingExists) {
+                console.log("hi");
                 const error = new Error("Building does not exist");
                 error.statusCode = 404;
                 error.buildingNotFound = true;
