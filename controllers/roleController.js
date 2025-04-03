@@ -9,9 +9,6 @@ class RoleController {
             const result = await RoleService.createRole(role);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role does not exist', error: e.message });
             } else {
@@ -26,9 +23,6 @@ class RoleController {
             const result = await RoleService.getRole(roleName);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role not found', error: e.message });
             } else {
@@ -43,9 +37,6 @@ class RoleController {
             const result = await RoleService.getRoleByID(roleID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role not found', error: e.message });
             } else {
@@ -59,9 +50,6 @@ class RoleController {
             const result = await RoleService.getAllRoles();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No roles found', error: e.message });
             } else {
@@ -72,15 +60,14 @@ class RoleController {
 
     static async updateRole(req, res) {
         try {
-            const { roleID } = req.params;
+            const { roleName } = req.params;
             const updates = req.body;
-            const result = await RoleService.updateRole(roleID, updates);
+            const result = await RoleService.updateRole(roleName, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else  if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role not found', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -94,9 +81,6 @@ class RoleController {
             const result = await RoleService.deleteRole(roleName);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role not found', error: e.message });
             } else {
@@ -110,9 +94,6 @@ class RoleController {
             const result = await RoleService.deleteAllRoles();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No roles found to delete', error: e.message });
             } else {

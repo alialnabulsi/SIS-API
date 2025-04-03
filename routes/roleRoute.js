@@ -8,7 +8,7 @@ router.post('/', validateRole, RoleController.createRole);
 router.get('/:roleName', validateRoleNameParam, RoleController.getRole);
 router.get('/id/:roleID', validateRoleIDParam, RoleController.getRoleByID);
 router.get('/', RoleController.getAllRoles);
-router.put('/:roleID', validateRoleUpdate, RoleController.updateRole);
+router.put('/:roleName', validateRoleUpdate, RoleController.updateRole);
 router.delete('/:roleName', validateRoleNameParam, RoleController.deleteRole);
 router.delete('/', RoleController.deleteAllRoles);
 

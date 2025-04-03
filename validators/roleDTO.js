@@ -63,11 +63,13 @@ const validateRoleNameParam = [
 
 // Validate role update
 const validateRoleUpdate = [
-    param('roleID')
-        .isInt({ min: 1 })
-        .withMessage('Role ID must be a positive integer')
+    param('roleName')
+        .isString()
+        .withMessage('Role name must be a string')
         .notEmpty()
-        .withMessage('Role ID is required'),
+        .withMessage('Role name is required')
+        .isIn(['Admin', 'Advisor', 'Instructor', 'Student'])
+        .withMessage('Invalid role name'),
 
     body('roleName')
         .optional()

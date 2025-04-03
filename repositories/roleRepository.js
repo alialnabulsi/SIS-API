@@ -5,6 +5,11 @@ require('dotenv').config();
 class RoleRepository {
 
     static async createRole(role) {
+        if (await this.roleExists(role.roleName)) {
+            const error = new Error("Role already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO role 
             (roleName, roleDescription)
@@ -16,9 +21,6 @@ class RoleRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createRole:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -33,18 +35,9 @@ class RoleRepository {
             let sql = `SELECT * FROM role WHERE roleName = ?`;
 
             const [row] = await database.query(sql, [roleName]);
-            if (!row) {
-                const error = new Error("Role does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Role.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getRoleByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -61,13 +54,9 @@ class RoleRepository {
 
             const [row] = await database.query(sql, [roleID]);
             // no need to check row since it is checked in the roleExists
-
             return Role.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getRoleByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -83,24 +72,23 @@ class RoleRepository {
             }
             return row.map(Role.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllRoles:", e);
-            }
             throw e;
         }
     }
 
-    static async updateRole(roleID, updates) {
-        if (!await this.roleExistsByID(roleID)) {
+    static async updateRole(roleName, updates) {
+        if (!await this.roleExists(roleName)) {
             const error = new Error("Role does not exist");
             error.statusCode = 404;
             throw error;
         }
-
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE role SET ";
             let conditions = [];
@@ -112,17 +100,14 @@ class RoleRepository {
             }
 
             sql += conditions.join(", ");
-            sql += " WHERE roleID = ?";
-            values.push(roleID);
+            sql += " WHERE roleName = ?";
+            values.push(roleName);
 
             const result = await database.query(sql, values);
             const { affectedRows } = result;
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateRole:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -140,9 +125,6 @@ class RoleRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteRole:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -161,9 +143,6 @@ class RoleRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllRoles:", e);
-            }
             throw e;
         }
     }
@@ -180,9 +159,6 @@ class RoleRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in roleExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -198,9 +174,6 @@ class RoleRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in roleExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

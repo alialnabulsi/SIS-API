@@ -178,9 +178,6 @@ class BuildingRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in buildingExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -196,9 +193,6 @@ class BuildingRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in buildingExistsByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

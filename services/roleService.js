@@ -6,9 +6,6 @@ class RoleService {
         try {
             return RoleRepository.createRole(role);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createRole service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -17,9 +14,6 @@ class RoleService {
         try {
             return RoleRepository.getRole(roleName);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getRole service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -28,9 +22,6 @@ class RoleService {
         try {
             return RoleRepository.getRoleByID(roleID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getRoleByID service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -39,9 +30,6 @@ class RoleService {
         try {
             return RoleRepository.getAllRoles();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllRoles service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -50,9 +38,6 @@ class RoleService {
         try {
             return RoleRepository.updateRole(roleID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateRole service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -61,9 +46,6 @@ class RoleService {
         try {
             return RoleRepository.deleteRole(roleName);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteRole service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -72,9 +54,6 @@ class RoleService {
         try {
             return RoleRepository.deleteAllRoles();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllRoles service:", e);
-            }
             throw new Error(e.message);
         }
     }
