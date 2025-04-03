@@ -5,6 +5,11 @@ require('dotenv').config();
 class DepartmentRepository {
 
     static async createDepartment(department) {
+        if (!await this.departmentExists(department.name)) {
+            const error = new Error("Department already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO department 
             (departmentID, facultyID, buildingID, name, establishedYear, contactEmail, contactPhone)
@@ -24,9 +29,6 @@ class DepartmentRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createDepartment:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -41,18 +43,9 @@ class DepartmentRepository {
             let sql = `SELECT * FROM department WHERE name = ?`;
 
             const [row] = await database.query(sql, [name]);
-            if (!row) {
-                const error = new Error("Department does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Department.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getDepartmentByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -73,9 +66,6 @@ class DepartmentRepository {
             return Department.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getDepartmentByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -91,9 +81,6 @@ class DepartmentRepository {
             }
             return row.map(Department.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllDepartments:", e);
-            }
             throw e;
         }
     }
@@ -105,10 +92,20 @@ class DepartmentRepository {
             throw error;
         }
 
-        try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.departmentID  && updates.departmentID.toLowerCase() !== departmentID.toLowerCase()) {
+            if (await this.departmentExistsByID(updates.departmentID)) {
+                const error = new Error("The new Department ID already exists");
+                error.statusCode = 409;
+                throw error;
             }
+        }
+        try {
+            
 
             let sql = "UPDATE department SET ";
             let conditions = [];
@@ -128,9 +125,6 @@ class DepartmentRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateDepartment:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -148,9 +142,6 @@ class DepartmentRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteDepartment:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -169,9 +160,6 @@ class DepartmentRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllDepartments:", e);
-            }
             throw e;
         }
     }
@@ -188,9 +176,6 @@ class DepartmentRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in departmentExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -206,9 +191,6 @@ class DepartmentRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in departmentExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

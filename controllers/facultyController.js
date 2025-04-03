@@ -9,7 +9,9 @@ class FacultyController {
             const result = await FacultyService.createFaculty(faculty);
             res.status(201).json(result);
         } catch (e) {
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Faculty already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -97,9 +99,6 @@ class FacultyController {
             const result = await FacultyService.deleteAllFaculties();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No faculties found to delete', error: e.message });
             } else {

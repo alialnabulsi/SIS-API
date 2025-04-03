@@ -1,13 +1,13 @@
 const DepartmentRepository = require("../repositories/departmentRepository");
 const Department = require("../models/departmentModel");
-const FacultyService = require("./facultyService");
-const BuildingService = require("./buildingService");
+const FacultyRepository = require("../repositories/facultyRepository");
+const BuildingRepository = require("../repositories/buildingRepository");
 
 class DepartmentService {
     static async createDepartment(department) {
         try {
             // Check if the faculty exists
-            const facultyExists = await FacultyService.getFacultyByID(department.facultyID);
+            const facultyExists = await FacultyRepository.getFacultyByID(department.facultyID);
             if (!facultyExists) {
                 const error = new Error("Faculty does not exist");
                 error.statusCode = 404;
@@ -15,7 +15,7 @@ class DepartmentService {
             }
 
             // Check if the building exists
-            const buildingExists = await BuildingService.getBuildingByID(department.buildingID);
+            const buildingExists = await BuildingRepository.getBuildingByID(department.buildingID);
             if (!buildingExists) {
                 const error = new Error("Building does not exist");
                 error.statusCode = 404;
@@ -24,9 +24,6 @@ class DepartmentService {
 
             return DepartmentRepository.createDepartment(department);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createDepartment service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -35,9 +32,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.getDepartment(name);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getDepartment service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -46,9 +40,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.getDepartmentByID(departmentID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getDepartmentByID service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -57,9 +48,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.getAllDepartments();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllDepartments service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -68,9 +56,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.updateDepartment(departmentID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateDepartment service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -79,9 +64,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.deleteDepartment(name);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteDepartment service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -90,9 +72,6 @@ class DepartmentService {
         try {
             return DepartmentRepository.deleteAllDepartments();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllDepartments service:", e);
-            }
             throw new Error(e.message);
         }
     }

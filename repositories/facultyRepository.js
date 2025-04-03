@@ -15,10 +15,9 @@ class FacultyRepository {
             (facultyID, name)
             VALUES (?,?)`;
             const result = await database.query(sql, [faculty.facultyID, faculty.name]);
-            const { affectedRows, insertId } = result;
+            const { affectedRows } = result;
             return {
                 affectedRows,
-                insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
             throw new Error(e.sqlMessage);
@@ -91,7 +90,7 @@ class FacultyRepository {
         }
         if (updates.facultyID  && updates.facultyID.toLowerCase() !== facultyID.toLowerCase()) {
             if (await this.facultyExistsByID(updates.facultyID)) {
-                const error = new Error("The new faculty name already exists");
+                const error = new Error("The new faculty ID already exists");
                 error.statusCode = 409;
                 throw error;
             }

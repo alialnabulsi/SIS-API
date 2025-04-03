@@ -9,7 +9,9 @@ class RoleController {
             const result = await RoleService.createRole(role);
             res.status(201).json(result);
         } catch (e) {
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Role already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });

@@ -54,9 +54,6 @@ class FacultyService {
         try {
             return FacultyRepository.deleteAllFaculties();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllFaculties service:", e);
-            }
             throw new Error(e.message);
         }
     }

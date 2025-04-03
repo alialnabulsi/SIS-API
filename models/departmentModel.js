@@ -1,3 +1,4 @@
+const moment = require("moment");
 class Department {
     constructor(departmentID, facultyID, buildingID, name, establishedYear, contactEmail, contactPhone) {
         this.departmentID = departmentID;
@@ -15,7 +16,7 @@ class Department {
             row.facultyID,
             row.buildingID,
             row.name,
-            row.establishedYear,
+            moment(row.establishedYear).format('YYYY-MM-DD'),            
             row.contactEmail,
             row.contactPhone
         );

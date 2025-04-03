@@ -74,7 +74,14 @@ const validateFacultyUpdate = [
         .withMessage('Faculty ID is required')
         .isLength({ min: 1, max: 16 })
         .withMessage('Faculty ID must be between 1 and 16 characters'),
-
+    body('facultyID')
+        .optional()
+        .isString()
+        .withMessage('Faculty ID must be a string')
+        .notEmpty()
+        .withMessage('Faculty ID is required')
+        .isLength({ min: 1, max: 16 })
+        .withMessage('Faculty ID must be between 1 and 16 characters'),
     body('name')
         .optional()
         .isString()
