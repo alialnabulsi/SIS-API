@@ -89,7 +89,7 @@ class RoleRepository {
         }
 
         if (updates.roleName  && updates.roleName.toLowerCase() !== roleName.toLowerCase()) {
-            if (await this.buildingExists(updates.roleName)) {
+            if (await this.roleExists(updates.roleName)) {
                 const error = new Error("The new Role name already exists");
                 error.statusCode = 409;
                 throw error;

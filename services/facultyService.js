@@ -6,9 +6,6 @@ class FacultyService {
         try {
             return FacultyRepository.createFaculty(faculty);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createFaculty service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -17,9 +14,6 @@ class FacultyService {
         try {
             return FacultyRepository.getFaculty(name);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getFaculty service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -28,9 +22,6 @@ class FacultyService {
         try {
             return FacultyRepository.getFacultyByID(facultyID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getFacultyByID service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -39,9 +30,6 @@ class FacultyService {
         try {
             return FacultyRepository.getAllFaculties();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllFaculties service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -50,9 +38,6 @@ class FacultyService {
         try {
             return FacultyRepository.updateFaculty(facultyID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateFaculty service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -61,9 +46,6 @@ class FacultyService {
         try {
             return FacultyRepository.deleteFaculty(name);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteFaculty service:", e);
-            }
             throw new Error(e.message);
         }
     }

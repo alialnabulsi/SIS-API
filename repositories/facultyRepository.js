@@ -5,6 +5,11 @@ require('dotenv').config();
 class FacultyRepository {
 
     static async createFaculty(faculty) {
+        if (await this.facultyExistsByID(faculty.facultyID)) {
+            const error = new Error("Faculty already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO faculty 
             (facultyID, name)
@@ -16,9 +21,6 @@ class FacultyRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createFaculty:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -33,18 +35,9 @@ class FacultyRepository {
             let sql = `SELECT * FROM faculty WHERE name = ?`;
 
             const [row] = await database.query(sql, [name]);
-            if (!row) {
-                const error = new Error("Faculty does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Faculty.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getFacultyByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -65,9 +58,6 @@ class FacultyRepository {
             return Faculty.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getFacultyByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -83,9 +73,6 @@ class FacultyRepository {
             }
             return row.map(Faculty.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllFaculties:", e);
-            }
             throw e;
         }
     }
@@ -97,10 +84,20 @@ class FacultyRepository {
             throw error;
         }
 
-        try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.facultyID  && updates.facultyID.toLowerCase() !== facultyID.toLowerCase()) {
+            if (await this.facultyExistsByID(updates.facultyID)) {
+                const error = new Error("The new faculty name already exists");
+                error.statusCode = 409;
+                throw error;
             }
+        }
+        try {
+            
 
             let sql = "UPDATE faculty SET ";
             let conditions = [];
@@ -120,9 +117,6 @@ class FacultyRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateFaculty:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -140,9 +134,6 @@ class FacultyRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteFaculty:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -161,9 +152,6 @@ class FacultyRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllFaculties:", e);
-            }
             throw e;
         }
     }
@@ -180,9 +168,6 @@ class FacultyRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in facultyExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -198,9 +183,6 @@ class FacultyRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in facultyExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

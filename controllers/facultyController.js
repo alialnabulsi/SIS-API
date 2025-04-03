@@ -9,9 +9,6 @@ class FacultyController {
             const result = await FacultyService.createFaculty(faculty);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty does not exist', error: e.message });
             } else {
@@ -26,9 +23,6 @@ class FacultyController {
             const result = await FacultyService.getFaculty(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty not found', error: e.message });
             } else {
@@ -43,9 +37,6 @@ class FacultyController {
             const result = await FacultyService.getFacultyByID(facultyID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty not found', error: e.message });
             } else {
@@ -59,9 +50,6 @@ class FacultyController {
             const result = await FacultyService.getAllFaculties();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No faculties found', error: e.message });
             } else {
@@ -77,9 +65,11 @@ class FacultyController {
             const result = await FacultyService.updateFaculty(facultyID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Faculty name already exists', error: e.message });
+            } else
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty not found', error: e.message });
             } else {
@@ -94,9 +84,6 @@ class FacultyController {
             const result = await FacultyService.deleteFaculty(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Faculty not found', error: e.message });
             } else {
