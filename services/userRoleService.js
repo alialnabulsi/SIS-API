@@ -1,13 +1,13 @@
 const UserRoleRepository = require("../repositories/userRoleRepository");
 const UserRole = require("../models/userRoleModel");
-const UserService = require("./userService");
-const RoleService = require("./roleService");
+const UserRepository = require("../repositories/userRepository");
+const RoleRepository = require("../repositories/roleRepository");
 
 class UserRoleService {
     static async createUserRole(userRole) {
         try {
             // Check if the user exists
-            const userExists = await UserService.getUserByID(userRole.userID);
+            const userExists = await UserRepository.userExistsByID(userRole.userID);
             if (!userExists) {
                 const error = new Error("User does not exist");
                 error.statusCode = 404;
@@ -15,7 +15,7 @@ class UserRoleService {
             }
 
             // Check if the role exists
-            const roleExists = await RoleService.getRoleByID(userRole.roleID);
+            const roleExists = await RoleRepository.roleExistsByID(userRole.roleID);
             if (!roleExists) {
                 const error = new Error("Role does not exist");
                 error.statusCode = 404;
@@ -57,6 +57,47 @@ class UserRoleService {
             if (process.env.NODE_ENV === 'development') {
                 console.error("Error in getUserRolesByRoleID service:", e);
             }
+            throw new Error(e.message);
+        }
+    }
+    // Add these new methods to the UserRoleService class
+
+    static async getAllUserRoles() {
+        try {
+            return UserRoleRepository.getAllUserRoles();
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async updateUserRole(userID, roleID, newRoleID) {
+        try {
+            // Verify the new role exists
+            const roleExists = await RoleService.getRoleByID(newRoleID);
+            if (!roleExists) {
+                const error = new Error("New role does not exist");
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return UserRoleRepository.updateUserRole(userID, roleID, newRoleID);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async deleteAllUserRoles() {
+        try {
+            return UserRoleRepository.deleteAllUserRoles();
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async userRoleExistsByID(userID, roleID) {
+        try {
+            return UserRoleRepository.userRoleExistsByID(userID, roleID);
+        } catch (e) {
             throw new Error(e.message);
         }
     }

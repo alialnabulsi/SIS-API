@@ -57,8 +57,37 @@ const validateRoleIDParam = [
     }
 ];
 
+const validateUserRoleUpdate = [
+    param('userID')
+        .isInt({ min: 1 })
+        .withMessage('User ID must be a positive integer')
+        .notEmpty()
+        .withMessage('User ID is required'),
+
+    param('roleID')
+        .isInt({ min: 1 })
+        .withMessage('Role ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Role ID is required'),
+
+    body('newRoleID')
+        .isInt({ min: 1 })
+        .withMessage('New Role ID must be a positive integer')
+        .notEmpty()
+        .withMessage('New Role ID is required'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
 module.exports = {
     validateUserRole,
     validateUserIDParam,
-    validateRoleIDParam
+    validateRoleIDParam,
+    validateUserRoleUpdate
 };

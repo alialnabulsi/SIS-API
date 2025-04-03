@@ -56,6 +56,73 @@ class UserRoleRepository {
         }
     }
 
+
+    static async getAllUserRoles() {
+        try {
+            let sql = `SELECT * FROM user_role`;
+            const rows = await database.query(sql);
+            if (!rows || rows.length === 0) {
+                const error = new Error("No user-role relationships exist");
+                error.statusCode = 404;
+                throw error;
+            }
+            return rows.map(UserRole.fromRow);
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async updateUserRole(userID, roleID, newRoleID) {
+        if (!await this.userRoleExists(userID, roleID)) {
+            const error = new Error("User-Role relationship does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (await this.userRoleExists(userID, newRoleID)) {
+            const error = new Error("New User-Role relationship already exists");
+            error.statusCode = 409;
+            throw error;
+        }
+
+        try {
+            let sql = `UPDATE user_role SET roleID = ? WHERE userID = ? AND roleID = ?`;
+            const result = await database.query(sql, [newRoleID, userID, roleID]);
+            const { affectedRows } = result;
+            return { affectedRows };
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async deleteAllUserRoles() {
+        try {
+            let sql = `DELETE FROM user_role`;
+            const result = await database.query(sql);
+            const { affectedRows } = result;
+
+            if (affectedRows === 0) {
+                const error = new Error("No user-role relationships to delete");
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return { affectedRows };
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async userRoleExistsByID(userID, roleID) {
+        try {
+            let sql = `SELECT * FROM user_role WHERE userID = ? AND roleID = ?`;
+            const rows = await database.query(sql, [userID, roleID]);
+            return rows && rows.length > 0;
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
     static async deleteUserRole(userID, roleID) {
         try {
             let sql = `DELETE FROM user_role WHERE userID = ? AND roleID = ?`;
