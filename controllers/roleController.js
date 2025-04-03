@@ -67,7 +67,9 @@ class RoleController {
         } catch (e) {
             if (e.statusCode === 400) {
                 res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
-            } else  if (e.statusCode === 404) {
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Role name already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Role not found', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
