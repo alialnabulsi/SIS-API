@@ -70,7 +70,10 @@ class FinalExamController {
             if (e.statusCode === 400) {
                 res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
             } else if (e.statusCode === 409) {
-                res.status(e.statusCode).json({ message: 'The new Final Exam ID already exists', error: e.message });
+                const message = e.courseAlreadyExists
+                    ? 'The new Final Exam Course ID already exists'
+                    : 'The new Final Exam ID already exists'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else if (e.statusCode === 404) {
                 const message = e.courseNotFound
                     ? 'course not found'

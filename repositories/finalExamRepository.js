@@ -95,6 +95,17 @@ class FinalExamRepository {
             if (await this.finalExamExists(updates.finalExamID)) {
                 const error = new Error("The new Final Exam ID already exists");
                 error.statusCode = 409;
+                error.courseAlreadyExists = false;
+                throw error;
+            }
+        }
+
+        if (updates.courseID) {
+
+            if (await this.finalExamExistsByCourse(updates.courseID)) {
+                const error = new Error("The new Final Exam Course ID already exists");
+                error.statusCode = 409;
+                error.courseAlreadyExists = true;
                 throw error;
             }
         }
