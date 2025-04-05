@@ -75,6 +75,13 @@ const validateCourseUpdate = [
         .notEmpty()
         .withMessage('Course ID is required'),
 
+    body('courseID')
+        .optional()
+        .isString()
+        .withMessage('Course ID must be a string')
+        .notEmpty()
+        .withMessage('Course ID is required'),
+
     body('name')
         .optional()
         .isString()

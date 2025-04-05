@@ -5,6 +5,11 @@ require('dotenv').config();
 class CourseRepository {
 
     static async createCourse(course) {
+        if (await this.courseExists(course.courseID)) {
+            const error = new Error("Course already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO course 
             (courseID, name, credits)
@@ -14,15 +19,11 @@ class CourseRepository {
                 course.name,
                 course.credits
             ]);
-            const { affectedRows, insertId } = result;
+            const { affectedRows} = result;
             return {
                 affectedRows,
-                insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -37,18 +38,9 @@ class CourseRepository {
             let sql = `SELECT * FROM course WHERE courseID = ?`;
 
             const [row] = await database.query(sql, [courseID]);
-            if (!row) {
-                const error = new Error("Course does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Course.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -69,9 +61,6 @@ class CourseRepository {
             return Course.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getCourseByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -87,9 +76,6 @@ class CourseRepository {
             }
             return row.map(Course.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllCourses:", e);
-            }
             throw e;
         }
     }
@@ -100,11 +86,19 @@ class CourseRepository {
             error.statusCode = 404;
             throw error;
         }
-
-        try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.courseID  && updates.courseID.toLowerCase() !== courseID.toLowerCase()) {
+            if (await this.courseExists(updates.courseID)) {
+                const error = new Error("The new Course ID already exists");
+                error.statusCode = 409;
+                throw error;
             }
+        }
+        try {
 
             let sql = "UPDATE course SET ";
             let conditions = [];
@@ -124,9 +118,6 @@ class CourseRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -144,9 +135,6 @@ class CourseRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -165,9 +153,6 @@ class CourseRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllCourses:", e);
-            }
             throw e;
         }
     }
@@ -184,9 +169,6 @@ class CourseRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in courseExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -202,9 +184,6 @@ class CourseRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in courseExistsByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

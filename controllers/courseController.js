@@ -9,10 +9,13 @@ class CourseController {
             const result = await CourseService.createCourse(course);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Course already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                res.status(e.statusCode).json({ message: 'Course does not exist', error: e.message });
+            } else {
+                res.status(500).json({ message: 'Internal server error', error: e.message });
             }
-            res.status(500).json({ message: 'Internal server error', error: e.message });
         }
     }
 
@@ -22,9 +25,6 @@ class CourseController {
             const result = await CourseService.getCourse(courseID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Course not found', error: e.message });
             } else {
@@ -39,9 +39,6 @@ class CourseController {
             const result = await CourseService.getCourseByName(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Course not found', error: e.message });
             } else {
@@ -55,9 +52,6 @@ class CourseController {
             const result = await CourseService.getAllCourses();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No courses found', error: e.message });
             } else {
@@ -73,9 +67,11 @@ class CourseController {
             const result = await CourseService.updateCourse(courseID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Course ID already exists', error: e.message });
+            } else
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Course not found', error: e.message });
             } else {
@@ -90,9 +86,6 @@ class CourseController {
             const result = await CourseService.deleteCourse(courseID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Course not found', error: e.message });
             } else {
@@ -106,9 +99,6 @@ class CourseController {
             const result = await CourseService.deleteAllCourses();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No courses found to delete', error: e.message });
             } else {

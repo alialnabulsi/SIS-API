@@ -6,9 +6,6 @@ class CourseService {
         try {
             return CourseRepository.createCourse(course);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createCourse service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -17,9 +14,6 @@ class CourseService {
         try {
             return CourseRepository.getCourse(courseID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getCourse service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -28,9 +22,6 @@ class CourseService {
         try {
             return CourseRepository.getCourseByName(name);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getCourseByName service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -39,9 +30,6 @@ class CourseService {
         try {
             return CourseRepository.getAllCourses();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllCourses service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -50,9 +38,6 @@ class CourseService {
         try {
             return CourseRepository.updateCourse(courseID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateCourse service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -61,9 +46,6 @@ class CourseService {
         try {
             return CourseRepository.deleteCourse(courseID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteCourse service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -72,9 +54,6 @@ class CourseService {
         try {
             return CourseRepository.deleteAllCourses();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllCourses service:", e);
-            }
             throw new Error(e.message);
         }
     }
