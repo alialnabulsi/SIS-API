@@ -5,23 +5,21 @@ const BuildingRepository = require("../repositories/buildingRepository");
 
 class DepartmentService {
     static async createDepartment(department) {
+        // Check if the faculty exists
+        const facultyExists = await FacultyRepository.facultyExistsByID(department.facultyID);
+        if (!facultyExists) {
+            const error = new Error("Faculty does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
+        // Check if the building exists
+        const buildingExists = await BuildingRepository.buildingExistsByID(department.buildingID);
+        if (!buildingExists) {
+            const error = new Error("Building does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
         try {
-            // Check if the faculty exists
-            const facultyExists = await FacultyRepository.getFacultyByID(department.facultyID);
-            if (!facultyExists) {
-                const error = new Error("Faculty does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
-            // Check if the building exists
-            const buildingExists = await BuildingRepository.getBuildingByID(department.buildingID);
-            if (!buildingExists) {
-                const error = new Error("Building does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return DepartmentRepository.createDepartment(department);
         } catch (e) {
             throw new Error(e.message);
@@ -53,6 +51,27 @@ class DepartmentService {
     }
 
     static async updateDepartment(departmentID, updates) {
+        if (updates.buildingID) {
+            const buildingExists = await BuildingRepository.buildingExistsByID(updates.buildingID);
+            
+            if (!buildingExists) {
+                console.log("hi");
+                const error = new Error("Building does not exist");
+                error.statusCode = 404;
+                error.buildingNotFound = true;
+                throw error;
+            }
+        }
+        if (updates.facultyID) {
+            const facultyExists = await FacultyRepository.facultyExistsByID(updates.facultyID);
+            
+            if (!facultyExists) {
+                const error = new Error("Faculty does not exist");
+                error.statusCode = 404;
+                error.facultyNotFound = true;
+                throw error;
+            }
+        }
         try {
             return DepartmentRepository.updateDepartment(departmentID, updates);
         } catch (e) {

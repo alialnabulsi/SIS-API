@@ -72,11 +72,14 @@ class DepartmentController {
             } else if (e.statusCode === 409) {
                 res.status(e.statusCode).json({ message: 'The new Department name already exists', error: e.message });
             } else
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Department not found', error: e.message });
-            } else {
-                res.status(500).json({ message: 'Internal server error', error: e.message });
-            }
+                if (e.statusCode === 404) {
+                    const message = e.buildingNotFound
+                        ? 'Buiding not found'
+                        : 'Room not found';
+                    res.status(e.statusCode).json({ message, error: e.message });
+                } else {
+                    res.status(500).json({ message: 'Internal server error', error: e.message });
+                }
         }
     }
 

@@ -5,7 +5,7 @@ require('dotenv').config();
 class DepartmentRepository {
 
     static async createDepartment(department) {
-        if (!await this.departmentExists(department.name)) {
+        if (await this.departmentExists(department.name)) {
             const error = new Error("Department already exists");
             error.statusCode = 409;
             throw error;
@@ -23,10 +23,9 @@ class DepartmentRepository {
                 department.contactEmail,
                 department.contactPhone
             ]);
-            const { affectedRows, insertId } = result;
+            const { affectedRows } = result;
             return {
                 affectedRows,
-                insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
             throw new Error(e.sqlMessage);
