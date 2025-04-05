@@ -5,7 +5,7 @@ require('dotenv').config();
 class ScheduleRepository {
 
     static async createSchedule(schedule) {
-        if (await this.scheduleExists(schedule.scheduleID)) {
+        if (await this.scheduleExistsByRoomAndTime(schedule.roomID, schedule.startTime, schedule.endTime, schedule.day)) {
             const error = new Error("Schedule already exists");
             error.statusCode = 409;
             throw error;

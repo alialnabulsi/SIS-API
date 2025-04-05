@@ -67,8 +67,15 @@ class ScheduleController {
             const result = await ScheduleService.updateSchedule(scheduleID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Schedule not found', error: e.message });
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new schedule ID already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                const message = e.roomNotFound
+                    ? 'Room not found'
+                    : 'Schedule not found'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
