@@ -5,6 +5,11 @@ require('dotenv').config();
 class FinalExamRepository {
 
     static async createFinalExam(finalExam) {
+        if (await this.finalExamExistsByCourse(finalExam.courseID)) {
+            const error = new Error("FinalExam already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO final_exam 
             (courseID)
@@ -18,9 +23,6 @@ class FinalExamRepository {
                 finalExamID: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createFinalExam:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -35,18 +37,9 @@ class FinalExamRepository {
             let sql = `SELECT * FROM final_exam WHERE finalExamID = ?`;
 
             const [row] = await database.query(sql, [finalExamID]);
-            if (!row) {
-                const error = new Error("FinalExam does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return FinalExam.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getFinalExam:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -67,9 +60,6 @@ class FinalExamRepository {
             return FinalExam.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getFinalExamByCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -79,30 +69,37 @@ class FinalExamRepository {
             let sql = `SELECT * FROM final_exam`;
             const row = await database.query(sql);
             if (!row || row.length === 0) {
-                const error = new Error("No final_exams exist");
+                const error = new Error("No final exams exist");
                 error.statusCode = 404;
                 throw error;
             }
             return row.map(FinalExam.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllFinalExams:", e);
-            }
             throw e;
         }
     }
 
     static async updateFinalExam(finalExamID, updates) {
         if (!await this.finalExamExists(finalExamID)) {
-            const error = new Error("FinalExam does not exist");
+            const error = new Error("Final Exam does not exist");
             error.statusCode = 404;
+            error.courseNotFound = false;
             throw error;
+        }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.finalExamID  && updates.finalExamID !== finalExamID) {
+            if (await this.finalExamExists(updates.finalExamID)) {
+                const error = new Error("The new Final Exam ID already exists");
+                error.statusCode = 409;
+                throw error;
+            }
         }
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE final_exam SET ";
             let conditions = [];
@@ -122,9 +119,6 @@ class FinalExamRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateFinalExam:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -142,9 +136,6 @@ class FinalExamRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteFinalExam:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -156,16 +147,13 @@ class FinalExamRepository {
             const { affectedRows } = result;
 
             if (affectedRows === 0) {
-                const error = new Error("No final_exams to delete");
+                const error = new Error("No final exams to delete");
                 error.statusCode = 404;
                 throw error;
             }
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllFinalExams:", e);
-            }
             throw e;
         }
     }
@@ -175,16 +163,11 @@ class FinalExamRepository {
         try {
             let sql = `SELECT * FROM final_exam WHERE finalExamID = ?`;
             const rows = await database.query(sql, [finalExamID]);
-
             if (rows && rows.length > 0) {
                 return true;
             }
-
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in finalExamExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -200,9 +183,6 @@ class FinalExamRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in finalExamExistsByCourse:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

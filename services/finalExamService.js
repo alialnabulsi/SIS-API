@@ -1,23 +1,19 @@
 const FinalExamRepository = require("../repositories/finalExamRepository");
 const FinalExam = require("../models/finalExamModel");
-const CourseService = require("./courseService");
+const CourseRepository = require("../repositories/courseRepository");
 
 class FinalExamService {
     static async createFinalExam(finalExam) {
+         // Check if the course exists
+         const courseExists = await CourseRepository.courseExists(finalExam.courseID);
+         if (!courseExists) {
+             const error = new Error("Course does not exist");
+             error.statusCode = 404;
+             throw error;
+         }
         try {
-            // Check if the course exists
-            const courseExists = await CourseService.getCourse(finalExam.courseID);
-            if (!courseExists) {
-                const error = new Error("Course does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return FinalExamRepository.createFinalExam(finalExam);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createFinalExam service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -26,9 +22,6 @@ class FinalExamService {
         try {
             return FinalExamRepository.getFinalExam(finalExamID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getFinalExam service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -37,9 +30,6 @@ class FinalExamService {
         try {
             return FinalExamRepository.getFinalExamByCourse(courseID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getFinalExamByCourse service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -48,20 +38,24 @@ class FinalExamService {
         try {
             return FinalExamRepository.getAllFinalExams();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllFinalExams service:", e);
-            }
             throw new Error(e.message);
         }
     }
 
     static async updateFinalExam(finalExamID, updates) {
+        if (updates.courseID) {
+            const courseExists = await CourseRepository.courseExists(updates.courseID);
+            
+            if (!courseExists) {
+                const error = new Error("Course does not exist");
+                error.statusCode = 404;
+                error.courseNotFound = true;
+                throw error;
+            }
+        }
         try {
             return FinalExamRepository.updateFinalExam(finalExamID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateFinalExam service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -70,9 +64,6 @@ class FinalExamService {
         try {
             return FinalExamRepository.deleteFinalExam(finalExamID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteFinalExam service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -81,9 +72,6 @@ class FinalExamService {
         try {
             return FinalExamRepository.deleteAllFinalExams();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllFinalExams service:", e);
-            }
             throw new Error(e.message);
         }
     }

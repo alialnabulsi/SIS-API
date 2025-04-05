@@ -59,6 +59,13 @@ const validateFinalExamUpdate = [
         .notEmpty()
         .withMessage('FinalExam ID is required'),
 
+    param('finalExamID')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('FinalExam ID must be a positive integer')
+        .notEmpty()
+        .withMessage('FinalExam ID is required'),
+
     body('courseID')
         .optional()
         .isString()

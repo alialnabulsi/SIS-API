@@ -101,6 +101,12 @@ const validateScheduleUpdate = [
         .notEmpty()
         .withMessage('Schedule ID is required'),
 
+    body('scheduleID')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('Schedule ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Schedule ID is required'),
     body('roomID')
         .optional()
         .isInt({ min: 1 })
