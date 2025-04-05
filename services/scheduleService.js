@@ -1,23 +1,20 @@
 const ScheduleRepository = require("../repositories/scheduleRepository");
 const Schedule = require("../models/scheduleModel");
-const RoomService = require("./roomService");
+const RoomRepository = require("../repositories/roomRepository");
 
 class ScheduleService {
     static async createSchedule(schedule) {
-        try {
-            // Check if the room exists
-            const roomExists = await RoomService.getRoomByID(schedule.roomID);
-            if (!roomExists) {
-                const error = new Error("Room does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
+        // Check if the room exists
+        const roomExists = await RoomRepository.roomExistsByID(schedule.roomID);
+        if (!roomExists) {
+            const error = new Error("Room does not exist");
+            error.statusCode = 404;
+            throw error;
+        }
 
+        try {
             return ScheduleRepository.createSchedule(schedule);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createSchedule service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -26,9 +23,6 @@ class ScheduleService {
         try {
             return ScheduleRepository.getSchedule(scheduleID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getSchedule service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -37,9 +31,6 @@ class ScheduleService {
         try {
             return ScheduleRepository.getScheduleByRoomAndTime(roomID, startTime, endTime, day);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getScheduleByRoomAndTime service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -48,20 +39,24 @@ class ScheduleService {
         try {
             return ScheduleRepository.getAllSchedules();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllSchedules service:", e);
-            }
             throw new Error(e.message);
         }
     }
 
     static async updateSchedule(scheduleID, updates) {
+        if (updates.roomID) {
+            const roomExists = await RoomRepository.roomExistsByID(updates.roomID);
+            
+            if (!roomExists) {
+                const error = new Error("Room does not exist");
+                error.statusCode = 404;
+                error.roomNotFound = true;
+                throw error;
+            }
+        }
         try {
             return ScheduleRepository.updateSchedule(scheduleID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateSchedule service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -70,9 +65,6 @@ class ScheduleService {
         try {
             return ScheduleRepository.deleteSchedule(scheduleID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteSchedule service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -81,9 +73,6 @@ class ScheduleService {
         try {
             return ScheduleRepository.deleteAllSchedules();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllSchedules service:", e);
-            }
             throw new Error(e.message);
         }
     }

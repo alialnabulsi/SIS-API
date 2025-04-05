@@ -47,7 +47,6 @@ class RoomService {
             const buildingExists = await BuildingRepository.buildingExistsByID(updates.buildingID);
             
             if (!buildingExists) {
-                console.log("hi");
                 const error = new Error("Building does not exist");
                 error.statusCode = 404;
                 error.buildingNotFound = true;
@@ -66,9 +65,6 @@ class RoomService {
         try {
             return RoomRepository.deleteRoom(roomNumber);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteRoom service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -77,9 +73,6 @@ class RoomService {
         try {
             return RoomRepository.deleteAllRooms();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllRooms service:", e);
-            }
             throw new Error(e.message);
         }
     }

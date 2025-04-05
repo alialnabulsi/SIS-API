@@ -5,6 +5,11 @@ require('dotenv').config();
 class ScheduleRepository {
 
     static async createSchedule(schedule) {
+        if (await this.scheduleExists(schedule.scheduleID)) {
+            const error = new Error("Schedule already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO schedule 
             (roomID, startTime, endTime, day, scheduleType)
@@ -22,9 +27,6 @@ class ScheduleRepository {
                 scheduleID: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createSchedule:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -39,18 +41,9 @@ class ScheduleRepository {
             let sql = `SELECT * FROM schedule WHERE scheduleID = ?`;
 
             const [row] = await database.query(sql, [scheduleID]);
-            if (!row) {
-                const error = new Error("Schedule does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Schedule.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getSchedule:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -71,9 +64,6 @@ class ScheduleRepository {
             return Schedule.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getScheduleByRoomAndTime:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -89,9 +79,6 @@ class ScheduleRepository {
             }
             return row.map(Schedule.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllSchedules:", e);
-            }
             throw e;
         }
     }
@@ -100,14 +87,23 @@ class ScheduleRepository {
         if (!await this.scheduleExists(scheduleID)) {
             const error = new Error("Schedule does not exist");
             error.statusCode = 404;
+            error.roomNotFound = false;
             throw error;
+        }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.scheduleID  && updates.scheduleID !== scheduleID) {
+            if (await this.scheduleExists(updates.scheduleID)) {
+                const error = new Error("The new schedule ID already exists");
+                error.statusCode = 409;
+                throw error;
+            }
         }
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
-
             let sql = "UPDATE schedule SET ";
             let conditions = [];
             let values = [];
@@ -126,9 +122,6 @@ class ScheduleRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateSchedule:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -146,9 +139,6 @@ class ScheduleRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteSchedule:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -167,9 +157,6 @@ class ScheduleRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllSchedules:", e);
-            }
             throw e;
         }
     }
@@ -186,9 +173,6 @@ class ScheduleRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in scheduleExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -204,9 +188,6 @@ class ScheduleRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in scheduleExistsByRoomAndTime:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

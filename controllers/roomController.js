@@ -88,9 +88,6 @@ class RoomController {
             const result = await RoomService.deleteRoom(roomNumber);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Room not found', error: e.message });
             } else {
@@ -104,9 +101,6 @@ class RoomController {
             const result = await RoomService.deleteAllRooms();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No rooms found to delete', error: e.message });
             } else {

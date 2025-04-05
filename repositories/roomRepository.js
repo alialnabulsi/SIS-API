@@ -134,9 +134,6 @@ class RoomRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteRoom:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -155,9 +152,6 @@ class RoomRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllRooms:", e);
-            }
             throw e;
         }
     }
@@ -174,9 +168,6 @@ class RoomRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in roomExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -192,9 +183,6 @@ class RoomRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in roomExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
