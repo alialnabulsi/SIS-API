@@ -6,9 +6,6 @@ class SemesterService {
         try {
             return SemesterRepository.createSemester(semester);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in createSemester service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -17,9 +14,6 @@ class SemesterService {
         try {
             return SemesterRepository.getSemester(semesterID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getSemester service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -28,9 +22,6 @@ class SemesterService {
         try {
             return SemesterRepository.getSemesterByNameAndYear(name, year);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getSemesterByNameAndYear service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -39,9 +30,6 @@ class SemesterService {
         try {
             return SemesterRepository.getAllSemesters();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in getAllSemesters service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -50,9 +38,6 @@ class SemesterService {
         try {
             return SemesterRepository.updateSemester(semesterID, updates);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in updateSemester service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -61,9 +46,6 @@ class SemesterService {
         try {
             return SemesterRepository.deleteSemester(semesterID);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteSemester service:", e);
-            }
             throw new Error(e.message);
         }
     }
@@ -72,9 +54,6 @@ class SemesterService {
         try {
             return SemesterRepository.deleteAllSemesters();
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Error in deleteAllSemesters service:", e);
-            }
             throw new Error(e.message);
         }
     }

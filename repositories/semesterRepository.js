@@ -5,6 +5,11 @@ require('dotenv').config();
 class SemesterRepository {
 
     static async createSemester(semester) {
+        if (await this.semesterExistsByNameAndYear(semester.name,semester.year)) {
+            const error = new Error("Semester already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO semester 
             (name, year)
@@ -19,9 +24,6 @@ class SemesterRepository {
                 semesterID: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createSemester:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -36,18 +38,10 @@ class SemesterRepository {
             let sql = `SELECT * FROM semester WHERE semesterID = ?`;
 
             const [row] = await database.query(sql, [semesterID]);
-            if (!row) {
-                const error = new Error("Semester does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
 
             return Semester.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getSemester:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -68,9 +62,6 @@ class SemesterRepository {
             return Semester.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getSemesterByNameAndYear:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -86,9 +77,6 @@ class SemesterRepository {
             }
             return row.map(Semester.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllSemesters:", e);
-            }
             throw e;
         }
     }
@@ -99,11 +87,21 @@ class SemesterRepository {
             error.statusCode = 404;
             throw error;
         }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.semesterID  && updates.semesterID !== semesterID) {
+            if (await this.semesterExists(updates.semesterID)) {
+                const error = new Error("The new Semester ID already exists");
+                error.statusCode = 409;
+                throw error;
+            }
+        }
+
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE semester SET ";
             let conditions = [];
@@ -123,9 +121,6 @@ class SemesterRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateSemester:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -143,9 +138,6 @@ class SemesterRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteSemester:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -164,9 +156,6 @@ class SemesterRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllSemesters:", e);
-            }
             throw e;
         }
     }
@@ -183,9 +172,6 @@ class SemesterRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in semesterExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -201,9 +187,6 @@ class SemesterRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in semesterExistsByNameAndYear:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

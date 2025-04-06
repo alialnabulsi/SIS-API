@@ -71,6 +71,13 @@ const validateSemesterUpdate = [
         .notEmpty()
         .withMessage('Semester ID is required'),
 
+    body('semesterID')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('Semester ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Semester ID is required'),
+
     body('name')
         .optional()
         .isIn(['spring', 'fall', 'summer'])

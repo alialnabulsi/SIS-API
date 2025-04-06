@@ -9,10 +9,11 @@ class SemesterController {
             const result = await SemesterService.createSemester(semester);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Semester already exists', error: e.message });
+            } else  {
+                res.status(500).json({ message: 'Internal server error', error: e.message });
             }
-            res.status(500).json({ message: 'Internal server error', error: e.message });
         }
     }
 
@@ -22,9 +23,6 @@ class SemesterController {
             const result = await SemesterService.getSemester(semesterID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Semester not found', error: e.message });
             } else {
@@ -39,9 +37,6 @@ class SemesterController {
             const result = await SemesterService.getSemesterByNameAndYear(name, year);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Semester not found', error: e.message });
             } else {
@@ -55,9 +50,6 @@ class SemesterController {
             const result = await SemesterService.getAllSemesters();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No semesters found', error: e.message });
             } else {
@@ -73,10 +65,11 @@ class SemesterController {
             const result = await SemesterService.updateSemester(semesterID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Semester number already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Semester not found', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -90,9 +83,6 @@ class SemesterController {
             const result = await SemesterService.deleteSemester(semesterID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Semester not found', error: e.message });
             } else {
@@ -106,9 +96,6 @@ class SemesterController {
             const result = await SemesterService.deleteAllSemesters();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No semesters found to delete', error: e.message });
             } else {
