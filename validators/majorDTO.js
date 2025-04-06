@@ -69,6 +69,12 @@ const validateMajorUpdate = [
         .notEmpty()
         .withMessage('Major ID is required'),
 
+    body('majorID')
+        .isInt({ min: 1 })
+        .withMessage('Major ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Major ID is required'),
+
     body('name')
         .optional()
         .isString()

@@ -9,9 +9,6 @@ class MinorController {
             const result = await MinorService.createMinor(minor);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Department does not exist', error: e.message });
             } else {

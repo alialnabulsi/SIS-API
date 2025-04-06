@@ -5,6 +5,11 @@ require('dotenv').config();
 class MajorRepository {
 
     static async createMajor(major) {
+        if (await this.majorExists(major.name)) {
+            const error = new Error("Major already exist");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO major 
             (departmentID, name)
@@ -16,9 +21,6 @@ class MajorRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createMajor:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -33,18 +35,10 @@ class MajorRepository {
             let sql = `SELECT * FROM major WHERE name = ?`;
 
             const [row] = await database.query(sql, [name]);
-            if (!row) {
-                const error = new Error("Major does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
 
             return Major.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getMajorByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -65,9 +59,6 @@ class MajorRepository {
             return Major.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getMajor:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -83,9 +74,6 @@ class MajorRepository {
             }
             return row.map(Major.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllMajors:", e);
-            }
             throw e;
         }
     }
@@ -94,13 +82,24 @@ class MajorRepository {
         if (!await this.majorExistsByID(majorID)) {
             const error = new Error("Major does not exist");
             error.statusCode = 404;
+            error.departmentNotFound = false;
             throw error;
         }
 
-        try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.majorID  && updates.majorID !== majorID) {
+            if (await this.majorExistsByID(updates.majorID)) {
+                const error = new Error("The new Major ID already exists");
+                error.statusCode = 409;
+                throw error;
             }
+        }
+
+        try {
 
             let sql = "UPDATE major SET ";
             let conditions = [];
@@ -120,9 +119,6 @@ class MajorRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateMajor:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -140,9 +136,6 @@ class MajorRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteMajor:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -161,9 +154,6 @@ class MajorRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllMajors:", e);
-            }
             throw e;
         }
     }
@@ -180,9 +170,6 @@ class MajorRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in majorExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -198,9 +185,6 @@ class MajorRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in majorExistsByName:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }

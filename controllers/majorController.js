@@ -9,9 +9,9 @@ class MajorController {
             const result = await MajorService.createMajor(major);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Major already exists', error: e.message });
+            } else
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Department does not exist', error: e.message });
             } else {
@@ -26,9 +26,6 @@ class MajorController {
             const result = await MajorService.getMajor(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Major not found', error: e.message });
             } else {
@@ -43,9 +40,6 @@ class MajorController {
             const result = await MajorService.getMajorByID(majorID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Major not found', error: e.message });
             } else {
@@ -59,9 +53,6 @@ class MajorController {
             const result = await MajorService.getAllMajors();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No majors found', error: e.message });
             } else {
@@ -77,9 +68,11 @@ class MajorController {
             const result = await MajorService.updateMajor(majorID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Major ID already exists', error: e.message });
+            } else
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Major not found', error: e.message });
             } else {
@@ -94,9 +87,6 @@ class MajorController {
             const result = await MajorService.deleteMajor(name);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Major not found', error: e.message });
             } else {
@@ -110,9 +100,6 @@ class MajorController {
             const result = await MajorService.deleteAllMajors();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No majors found to delete', error: e.message });
             } else {
