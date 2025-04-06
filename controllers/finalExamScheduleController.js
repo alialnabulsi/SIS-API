@@ -9,10 +9,9 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.createFinalExamSchedule(finalExamSchedule);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Final Exam Schedule already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Final Exam or Schedule does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -26,9 +25,6 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.getFinalExamSchedule(finalExamScheduleID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Final Exam Schedule not found', error: e.message });
             } else {
@@ -42,9 +38,6 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.getAllFinalExamSchedules();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No final exam schedules found', error: e.message });
             } else {
@@ -60,11 +53,15 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.updateFinalExamSchedule(finalExamScheduleID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Final Exam Schedule not found', error: e.message });
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Final Exam Schedule ID already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                const message = e.finalExamNotFound
+                    ? 'Final Exam or Schedule not found'
+                    : 'Final Exam Schedule not found'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
@@ -77,9 +74,6 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.deleteFinalExamSchedule(finalExamScheduleID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Final Exam Schedule not found', error: e.message });
             } else {
@@ -93,9 +87,6 @@ class FinalExamScheduleController {
             const result = await FinalExamScheduleService.deleteAllFinalExamSchedules();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No final exam schedules found to delete', error: e.message });
             } else {

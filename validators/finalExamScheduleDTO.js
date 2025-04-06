@@ -48,6 +48,13 @@ const validateFinalExamScheduleUpdate = [
         .notEmpty()
         .withMessage('Final Exam Schedule ID is required'),
 
+    body('finalExamScheduleID')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('Final Exam Schedule ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Final Exam Schedule ID is required'),
+
     body('finalExamID')
         .optional()
         .isInt({ min: 1 })
