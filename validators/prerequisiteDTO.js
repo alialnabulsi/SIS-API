@@ -77,6 +77,14 @@ const validatePrerequisiteUpdate = [
         .notEmpty()
         .withMessage('Prerequisite ID is required'),
 
+    body('prerequisiteCourseID')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('Prerequisite ID must be a positive integer')
+        .notEmpty()
+        .withMessage('Prerequisite ID is required'),
+
+
     body('courseID')
         .optional()
         .isString()

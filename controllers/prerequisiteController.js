@@ -9,10 +9,9 @@ class PrerequisiteController {
             const result = await PrerequisiteService.createPrerequisite(prerequisite);
             res.status(201).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
+            if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'Prerequisite already exists', error: e.message });
+            } else if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Course or Prerequisite course does not exist', error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
@@ -26,9 +25,6 @@ class PrerequisiteController {
             const result = await PrerequisiteService.getPrerequisite(prerequisiteCourseID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Prerequisite not found', error: e.message });
             } else {
@@ -43,9 +39,6 @@ class PrerequisiteController {
             const result = await PrerequisiteService.getPrerequisiteByCourseAndPrerequisite(courseID, prerequisiteID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Prerequisite not found', error: e.message });
             } else {
@@ -59,9 +52,6 @@ class PrerequisiteController {
             const result = await PrerequisiteService.getAllPrerequisites();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No prerequisites found', error: e.message });
             } else {
@@ -77,11 +67,15 @@ class PrerequisiteController {
             const result = await PrerequisiteService.updatePrerequisite(prerequisiteCourseID, updates);
             res.status(204).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
-            if (e.statusCode === 404) {
-                res.status(e.statusCode).json({ message: 'Prerequisite not found', error: e.message });
+            if (e.statusCode === 400) {
+                res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
+            } else if (e.statusCode === 409) {
+                res.status(e.statusCode).json({ message: 'The new Prerequisite ID already exists', error: e.message });
+            } else if (e.statusCode === 404) {
+                const message = e.courseNotFound
+                    ? 'Course not found'
+                    : 'Prerequisite not found'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
@@ -94,9 +88,6 @@ class PrerequisiteController {
             const result = await PrerequisiteService.deletePrerequisite(prerequisiteCourseID);
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'Prerequisite not found', error: e.message });
             } else {
@@ -110,9 +101,6 @@ class PrerequisiteController {
             const result = await PrerequisiteService.deleteAllPrerequisites();
             res.status(200).json(result);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error(e.message);
-            }
             if (e.statusCode === 404) {
                 res.status(e.statusCode).json({ message: 'No prerequisites found to delete', error: e.message });
             } else {

@@ -5,6 +5,11 @@ require('dotenv').config();
 class PrerequisiteRepository {
 
     static async createPrerequisite(prerequisite) {
+        if (await this.prerequisiteExistsByCourseAndPrerequisite(prerequisite.courseID, prerequisite.prerequisite)) {
+            const error = new Error("Prerequisite already exists");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO prerequisite 
             (courseID, prerequisiteID, prerequisiteType)
@@ -20,9 +25,6 @@ class PrerequisiteRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createPrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -37,18 +39,9 @@ class PrerequisiteRepository {
             let sql = `SELECT * FROM prerequisite WHERE prerequisiteCourseID = ?`;
 
             const [row] = await database.query(sql, [prerequisiteCourseID]);
-            if (!row) {
-                const error = new Error("Prerequisite does not exist");
-                error.statusCode = 404;
-                throw error;
-            }
-
             return Prerequisite.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getPrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -69,9 +62,6 @@ class PrerequisiteRepository {
             return Prerequisite.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getPrerequisiteByCourseAndPrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -87,9 +77,6 @@ class PrerequisiteRepository {
             }
             return row.map(Prerequisite.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllPrerequisites:", e);
-            }
             throw e;
         }
     }
@@ -98,13 +85,23 @@ class PrerequisiteRepository {
         if (!await this.prerequisiteExists(prerequisiteCourseID)) {
             const error = new Error("Prerequisite does not exist");
             error.statusCode = 404;
+            error.courseNotFound = false;
             throw error;
+        }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.prerequisiteCourseID  && updates.prerequisiteCourseID !==prerequisiteCourseID) {
+            if (await this.prerequisiteExists(updates.prerequisiteCourseID)) {
+                const error = new Error("The new Prerequisite ID already exists");
+                error.statusCode = 409;
+                throw error;
+            }
         }
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE prerequisite SET ";
             let conditions = [];
@@ -124,9 +121,6 @@ class PrerequisiteRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updatePrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -144,9 +138,6 @@ class PrerequisiteRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deletePrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -165,9 +156,6 @@ class PrerequisiteRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllPrerequisites:", e);
-            }
             throw e;
         }
     }
@@ -184,9 +172,6 @@ class PrerequisiteRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in prerequisiteExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -202,9 +187,6 @@ class PrerequisiteRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in prerequisiteExistsByCourseAndPrerequisite:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
