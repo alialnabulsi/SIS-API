@@ -137,6 +137,12 @@ const validateUserUpdate = [
         .notEmpty()
         .withMessage('User ID is required'),
 
+    body('userID')
+        .isInt({ min: 1 })
+        .withMessage('User ID must be a positive integer')
+        .notEmpty()
+        .withMessage('User ID is required'),
+
     body('username')
         .optional()
         .isString()

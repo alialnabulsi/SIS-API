@@ -5,6 +5,11 @@ require('dotenv').config();
 class UserRepository {
 
     static async createUser(user) {
+        if (await this.userExists(username)) {
+            const error = new Error("User already exist");
+            error.statusCode = 409;
+            throw error;
+        }
         try {
             let sql = `INSERT INTO user 
             (username, password, firstName, lastName, dateOfBirth, email, profilePicture, createdAt, updatedAt, lastLogin, city, zipCode, street)
@@ -30,9 +35,6 @@ class UserRepository {
                 insertId: insertId.toString() // since it is BigInt so it can't be serialized
             };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in createUser:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -56,9 +58,6 @@ class UserRepository {
             return User.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getUserByUsername:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -79,9 +78,6 @@ class UserRepository {
             return User.fromRow(row);
 
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getUserByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -97,9 +93,6 @@ class UserRepository {
             }
             return row.map(User.fromRow);
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in getAllUsers:", e);
-            }
             throw e;
         }
     }
@@ -110,11 +103,20 @@ class UserRepository {
             error.statusCode = 404;
             throw error;
         }
+        if (!updates || Object.keys(updates).length === 0) {
+            const error = new Error("No updates provided");
+            error.statusCode = 400; 
+            throw error;
+        }
+        if (updates.userID  && updates.userID!== userID) {
+            if (await this.userExistsByID(updates.userID)) {
+                const error = new Error("The new faculty ID already exists");
+                error.statusCode = 409;
+                throw error;
+            }
+        }
 
         try {
-            if (!updates || Object.keys(updates).length === 0) {
-                return { message: "No updates provided" };
-            }
 
             let sql = "UPDATE user SET ";
             let conditions = [];
@@ -134,9 +136,6 @@ class UserRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in updateUser:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -154,9 +153,6 @@ class UserRepository {
             const { affectedRows } = result;
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteUser:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -175,9 +171,6 @@ class UserRepository {
 
             return { affectedRows };
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in deleteAllUsers:", e);
-            }
             throw e;
         }
     }
@@ -194,9 +187,6 @@ class UserRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in userExistsByID:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
@@ -212,9 +202,6 @@ class UserRepository {
 
             return false;
         } catch (e) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error("Database Error in userExists:", e);
-            }
             throw new Error(e.sqlMessage);
         }
     }
