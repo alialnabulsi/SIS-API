@@ -225,9 +225,60 @@ const validateUserUpdate = [
     }
 ];
 
+
+const validateLogin = [
+    body('email')
+        .isEmail()
+        .withMessage('Email must be a valid email address')
+        .notEmpty()
+        .withMessage('Email is required'),
+
+    body('password')
+        .isString()
+        .withMessage('Password must be a string')
+        .notEmpty()
+        .withMessage('Password is required'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+const validateResetPassword = [
+    body('currentPassword')
+        .isString()
+        .withMessage('Current password must be a string')
+        .notEmpty()
+        .withMessage('Current password is required'),
+
+    body('newPassword')
+        .isString()
+        .withMessage('New password must be a string')
+        .notEmpty()
+        .withMessage('New password is required')
+        .isLength({ min: 8 })
+        .withMessage('New password must be at least 8 characters')
+        .custom((value, { req }) => value !== req.body.currentPassword)
+        .withMessage('New password must be different from current password'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
 module.exports = {
     validateUser,
     validateUserIDParam,
     validateUsernameParam,
-    validateUserUpdate
+    validateUserUpdate,
+    validateLogin,
+    validateResetPassword
 };

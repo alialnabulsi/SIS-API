@@ -1,5 +1,7 @@
 class User {
-    constructor(userID, username, password, firstName, lastName, dateOfBirth, email, profilePicture, createdAt, updatedAt, lastLogin, city, zipCode, street) {
+    constructor(userID, username, password, firstName, lastName
+        , dateOfBirth, email, profilePicture, createdAt, updatedAt,
+         lastLogin, city, zipCode, street,isLocked = false, loginAttempts = 0) {
         this.userID = userID;
         this.username = username;
         this.password = password;
@@ -14,6 +16,8 @@ class User {
         this.city = city;
         this.zipCode = zipCode;
         this.street = street;
+        this.isLocked = isLocked;
+        this.loginAttempts = loginAttempts;
     }
 
     static fromRow(row) {
@@ -33,6 +37,13 @@ class User {
             row.zipCode,
             row.street
         );
+    }
+    async validatePassword(password) {
+        return bcrypt.compare(password, this.password);
+    }
+
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
     }
 }
 

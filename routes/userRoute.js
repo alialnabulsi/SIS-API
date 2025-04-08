@@ -1,6 +1,6 @@
 const express = require('express');
 const UserController = require('../controllers/userController');
-const { validateUser, validateUserIDParam, validateUsernameParam, validateUserUpdate } = require('../validators/userDTO');
+const { validateUser, validateUserIDParam, validateUsernameParam, validateUserUpdate, validateLogin,validateResetPassword} = require('../validators/userDTO');
 
 const router = express.Router();
 
@@ -11,5 +11,9 @@ router.get('/', UserController.getAllUsers);
 router.put('/:userID', validateUserUpdate, UserController.updateUser);
 router.delete('/:username', validateUsernameParam, UserController.deleteUser);
 router.delete('/', UserController.deleteAllUsers);
-
+router.post('/login', validateLogin, UserController.loginUser);
+router.post('/:userID/reset-password', validateUserIDParam, validateResetPassword, UserController.resetPassword);
+router.post('/:userID/lock', validateUserIDParam, UserController.lockAccount);
+router.post('/:userID/unlock', validateUserIDParam, UserController.unlockAccount);
+router.get('/search', UserController.searchUsers);
 module.exports = router;

@@ -57,6 +57,55 @@ class UserService {
             throw new Error(e.message);
         }
     }
+
+
+    static async loginUser(userID) {
+        try {
+            await UserRepository.setLastLogin(userID);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async updatePassword(userID, newPassword) {
+        try {
+            return await UserRepository.updatePassword(userID, newPassword);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async lockAccount(userID) {
+        try {
+            return await UserRepository.lockAccount(userID);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async unlockAccount(userID) {
+        try {
+            return await UserRepository.unlockAccount(userID);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async searchUsers(searchTerm) {
+        try {
+            return await UserRepository.searchUsers(searchTerm);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    static async validateCredentials(email, password) {
+        try {
+            return await UserRepository.validateCredentials(email, password);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
 }
 
 module.exports = UserService;

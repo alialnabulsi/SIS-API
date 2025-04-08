@@ -81,6 +81,21 @@ class UserRepository {
             throw new Error(e.sqlMessage);
         }
     }
+    //no route for this
+    static async getUserByEmail(email) {
+        if (!await this.emailExists(email)) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        try {
+            let sql = `SELECT * FROM user WHERE email = ?`;
+            const [row] = await database.query(sql, [email]);
+            return User.fromRow(row);
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
 
     static async getAllUsers() {
         try {
@@ -105,10 +120,10 @@ class UserRepository {
         }
         if (!updates || Object.keys(updates).length === 0) {
             const error = new Error("No updates provided");
-            error.statusCode = 400; 
+            error.statusCode = 400;
             throw error;
         }
-        if (updates.userID  && updates.userID!== userID) {
+        if (updates.userID && updates.userID !== userID) {
             if (await this.userExistsByID(updates.userID)) {
                 const error = new Error("The new faculty ID already exists");
                 error.statusCode = 409;
@@ -175,6 +190,99 @@ class UserRepository {
         }
     }
 
+
+    static async updatePassword(userID, newPassword) {
+        try {
+            const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+            const sql = `UPDATE user SET password = ? WHERE userID = ?`;
+            const result = await database.query(sql, [hashedPassword, userID]);
+            return { affectedRows: result.affectedRows };
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async lockAccount(userID) {
+        try {
+            const sql = `UPDATE user SET isLocked = true WHERE userID = ?`;
+            const result = await database.query(sql, [userID]);
+            return { affectedRows: result.affectedRows };
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async unlockAccount(userID) {
+        try {
+            const sql = `UPDATE user SET isLocked = false, loginAttempts = 0 WHERE userID = ?`;
+            const result = await database.query(sql, [userID]);
+            return { affectedRows: result.affectedRows };
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async searchUsers(searchTerm) {
+        try {
+            let sql = `
+            SELECT * FROM user 
+            WHERE username LIKE ? 
+            OR firstName LIKE ? 
+            OR lastName LIKE ? 
+            OR email LIKE ?
+        `;
+            const searchParam = `%${searchTerm}%`;
+            const rows = await database.query(sql, [searchParam, searchParam, searchParam, searchParam]);
+            return rows.map(User.fromRow);
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async validateCredentials(email, password) {
+        try {
+            let sql = `SELECT * FROM user WHERE email = ?`;
+            const [row] = await database.query(sql, [email]);
+
+            if (!row) {
+                const error = new Error("Invalid credentials");
+                error.statusCode = 401;
+                throw error;
+            }
+
+            const user = User.fromRow(row);
+            const isValid = await user.validatePassword(password);
+
+            if (!isValid) {
+                const error = new Error("Invalid credentials");
+                error.statusCode = 401;
+                throw error;
+            }
+
+            return user;
+        } catch (e) {
+            throw new Error(e.sqlMessage || e.message);
+        }
+    }
+
+    static async setLastLogin(userID) {
+        try {
+            const sql = `UPDATE user SET lastLogin = NOW() WHERE userID = ?`;
+            await database.query(sql, [userID]);
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async incrementLoginAttempts(userID) {
+        try {
+            const sql = `UPDATE user SET loginAttempts = loginAttempts + 1 WHERE userID = ?`;
+            await database.query(sql, [userID]);
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
     // Check if the user exists by userID
     static async userExistsByID(userID) {
         try {
@@ -200,6 +308,21 @@ class UserRepository {
                 return true;
             }
 
+            return false;
+        } catch (e) {
+            throw new Error(e.sqlMessage);
+        }
+    }
+
+    static async emailExists(email) {
+        try {
+            let sql = `SELECT * FROM user WHERE email = ?`;
+            const rows = await database.query(sql, [email]);
+    
+            if (rows && rows.length > 0) {
+                return true;
+            }
+    
             return false;
         } catch (e) {
             throw new Error(e.sqlMessage);
