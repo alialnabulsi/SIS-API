@@ -35,7 +35,7 @@ A comprehensive **Student Information System (SIS)** designed to manage students
 - **Database**: MySQL (with Sequelize ORM)
 - **Validation**: Express Validator
 - **Environment Management**: Dotenv
-- **API Testing**: Postman or Insomnia
+- **API Testing**: Postman 
 - **Version Control**: Git
 
 ---
