@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors'); //to handle requests from different domains
 const bodyParser = require('body-parser'); //for converting to json objects
+const momnent =  require("moment");
 
 //Import Routes
 const adminRoute = require('./routes/adminRoute');
@@ -41,6 +42,15 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use((req,res,next) =>{
+
+    console.log(req.originalUrl);
+    console.log(momnent());
+
+    console.log(res.statusCode) ;
+
+    next();
+    })
 // Use Routes
 app.use('/api/sis/admin', adminRoute);
 app.use('/api/sis/advisor', advisorRoute);
