@@ -1,7 +1,8 @@
+const bcrypt = require("bcrypt");
 class User {
     constructor(userID, username, password, firstName, lastName
         , dateOfBirth, email, profilePicture, createdAt, updatedAt,
-         lastLogin, city, zipCode, street,isLocked = false, loginAttempts = 0) {
+         lastLogin, city, zipCode, street,isLocked = false , loginAttempts = 0 ) {
         this.userID = userID;
         this.username = username;
         this.password = password;
@@ -16,8 +17,8 @@ class User {
         this.city = city;
         this.zipCode = zipCode;
         this.street = street;
-        this.isLocked = isLocked;
-        this.loginAttempts = loginAttempts;
+        this.isLocked = isLocked ;
+        this.loginAttempts = loginAttempts ;
     }
 
     static fromRow(row) {
@@ -35,11 +36,13 @@ class User {
             row.lastLogin,
             row.city,
             row.zipCode,
-            row.street
+            row.street,
+            row.isLocked,
+            row.loginAttempts
         );
     }
     async validatePassword(password) {
-        return bcrypt.compare(password, this.password);
+        return password==this.password;
     }
 
     async hashPassword() {

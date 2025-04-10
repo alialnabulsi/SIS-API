@@ -5,9 +5,11 @@ require('dotenv').config();
 class UserRepository {
 
     static async createUser(user) {
-        if (await this.userExists(username)) {
+        if (await this.userExists(user.username)) {
             const error = new Error("User already exist");
             error.statusCode = 409;
+            error.usernameExists=false;
+
             throw error;
         }
         try {
@@ -125,7 +127,7 @@ class UserRepository {
         }
         if (updates.userID && updates.userID !== userID) {
             if (await this.userExistsByID(updates.userID)) {
-                const error = new Error("The new faculty ID already exists");
+                const error = new Error("The new User ID already exists");
                 error.statusCode = 409;
                 throw error;
             }
@@ -247,21 +249,25 @@ class UserRepository {
             if (!row) {
                 const error = new Error("Invalid credentials");
                 error.statusCode = 401;
+                error.email = email;
                 throw error;
             }
 
             const user = User.fromRow(row);
+
             const isValid = await user.validatePassword(password);
 
             if (!isValid) {
                 const error = new Error("Invalid credentials");
                 error.statusCode = 401;
+                error.email = email;
+
                 throw error;
             }
 
             return user;
         } catch (e) {
-            throw new Error(e.sqlMessage || e.message);
+            throw e;
         }
     }
 
@@ -300,6 +306,7 @@ class UserRepository {
     }
 
     static async userExists(username) {
+        
         try {
             let sql = `SELECT * FROM user WHERE username = ?`;
             const rows = await database.query(sql, [username]);

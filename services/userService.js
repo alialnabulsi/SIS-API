@@ -35,6 +35,16 @@ class UserService {
     }
 
     static async updateUser(userID, updates) {
+        if (updates.username) {
+            const usernameExists = await UserRepository.userExists(updates.username);
+            
+            if (usernameExists) {
+                const error = new Error("User already exist");
+                error.statusCode = 409;
+                error.usernameExists=true;
+                throw error;
+            }
+        }
         try {
             return UserRepository.updateUser(userID, updates);
         } catch (e) {
@@ -103,7 +113,8 @@ class UserService {
         try {
             return await UserRepository.validateCredentials(email, password);
         } catch (e) {
-            throw new Error(e.message);
+
+            throw e;
         }
     }
 }

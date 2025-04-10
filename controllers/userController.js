@@ -74,7 +74,10 @@ class UserController {
             if (e.statusCode === 400) {
                 res.status(e.statusCode).json({ message: 'No updates provided', error: e.message });
             } else if (e.statusCode === 409) {
-                res.status(e.statusCode).json({ message: 'The new User ID already exists', error: e.message });
+                const message = e.usernameExists
+                    ? 'Username already exists '
+                    : 'The new User ID already exists'; 
+                res.status(e.statusCode).json({ message, error: e.message });
             } else
                 if (e.statusCode === 404) {
                     res.status(e.statusCode).json({ message: 'User not found', error: e.message });
@@ -115,20 +118,21 @@ class UserController {
         try {
             const { email, password } = req.body;
             const user = await UserService.validateCredentials(email, password);
-
             if (user.isLocked) {
                 return res.status(403).json({ message: 'Account is locked' });
             }
 
             await UserService.loginUser(user.userID);
+
             res.status(200).json({ message: 'Login successful', user });
         } catch (e) {
             if (e.statusCode === 401) {
                 try {
-                    const user = await UserRepository.getUserByEmail(email);
+                    const user = await UserRepository.getUserByEmail(e.email);
                     if (user) {
                         await UserRepository.incrementLoginAttempts(user.userID);
                         if (user.loginAttempts + 1 >= 5) {
+
                             await UserService.lockAccount(user.userID);
                             return res.status(403).json({ message: 'Account locked due to too many failed attempts' });
                         }
@@ -185,6 +189,7 @@ class UserController {
 
     static async searchUsers(req, res) {
         try {
+
             const { term } = req.query;
             const users = await UserService.searchUsers(term);
             res.status(200).json(users);
