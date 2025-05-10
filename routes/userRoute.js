@@ -12,7 +12,7 @@ router.get('/find/search', UserController.searchUsers);
 router.put('/:userID', validateUserUpdate, UserController.updateUser);
 router.delete('/:username', validateUsernameParam, UserController.deleteUser);
 router.delete('/', UserController.deleteAllUsers);
-router.post('/login', validateLogin, UserController.loginUser);
+router.post('/login', validateLogin ,UserController.loginUser);
 router.post('/:userID/reset-password', validateUserIDParam, validateResetPassword, UserController.resetPassword);
 router.post('/:userID/lock', validateUserIDParam, UserController.lockAccount);
 router.post('/:userID/unlock', validateUserIDParam, UserController.unlockAccount);

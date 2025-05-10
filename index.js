@@ -39,18 +39,11 @@ const userRoute = require('./routes/userRoute');
 const app = express();
 
 // Middleware
+app.use(express.urlencoded({extended: true}));
+app.set('view engine', 'ejs');
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use((req,res,next) =>{
-
-    console.log(req.originalUrl);
-    console.log(momnent());
-
-    console.log(res.statusCode) ;
-
-    next();
-    })
 // Use Routes
 app.use('/api/sis/admin', adminRoute);
 app.use('/api/sis/advisor', advisorRoute);
@@ -81,9 +74,10 @@ app.use('/api/sis/student', studentRoute);
 app.use('/api/sis/user-role', userRoleRoute);
 app.use('/api/sis/user', userRoute);
 
+app.get('/', (req, res) => {
 
-
-
+    res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\index.ejs', { title: 'Home' });
+});
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => 

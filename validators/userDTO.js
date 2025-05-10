@@ -1,5 +1,4 @@
 const { body, param, validationResult } = require('express-validator');
-
 // Validate user creation
 const validateUser = [
     body('username')

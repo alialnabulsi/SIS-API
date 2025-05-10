@@ -115,6 +115,7 @@ class UserController {
     }
 
     static async loginUser(req, res) {
+        console.log(req);
         try {
             const { email, password } = req.body;
             const user = await UserService.validateCredentials(email, password);
@@ -124,7 +125,7 @@ class UserController {
 
             await UserService.loginUser(user.userID);
 
-            res.status(200).json({ message: 'Login successful', user });
+            res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\home.ejs',{user : user});
         } catch (e) {
             if (e.statusCode === 401) {
                 try {

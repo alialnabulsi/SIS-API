@@ -242,10 +242,10 @@ class UserRepository {
     }
 
     static async validateCredentials(email, password) {
+        console.log("Validating credentials for email:", email,password);
         try {
             let sql = `SELECT * FROM user WHERE email = ?`;
             const [row] = await database.query(sql, [email]);
-
             if (!row) {
                 const error = new Error("Invalid credentials");
                 error.statusCode = 401;
@@ -254,9 +254,9 @@ class UserRepository {
             }
 
             const user = User.fromRow(row);
-
+            console.log(password);
             const isValid = await user.validatePassword(password);
-
+            console.log("Password validation result:", isValid);
             if (!isValid) {
                 const error = new Error("Invalid credentials");
                 error.statusCode = 401;

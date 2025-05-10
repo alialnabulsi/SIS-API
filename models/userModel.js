@@ -42,7 +42,7 @@ class User {
         );
     }
     async validatePassword(password) {
-        return bcrypt.compare(password,this.password);
+        return password === this.password;
     }
 
     async hashPassword() {
