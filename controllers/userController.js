@@ -115,7 +115,6 @@ class UserController {
     }
 
     static async loginUser(req, res) {
-        console.log(req);
         try {
             const { email, password } = req.body;
             const user = await UserService.validateCredentials(email, password);
