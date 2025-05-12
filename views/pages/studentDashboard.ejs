@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instructor Dashboard | UOB SIS</title>
+  <title>Student Dashboard | UOB SIS</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
@@ -115,8 +115,8 @@
       margin-right: 10px;
     }
     
-    /* Faculty Info */
-    .faculty-info {
+    /* Welcome Banner */
+    .welcome-banner {
       background: linear-gradient(135deg, var(--primary), var(--dark));
       color: white;
       padding: 25px;
@@ -127,29 +127,29 @@
       align-items: center;
     }
     
-    .faculty-text h2 {
+    .welcome-text h2 {
       font-size: 1.5rem;
       margin-bottom: 10px;
     }
     
-    .faculty-text p {
+    .welcome-text p {
       opacity: 0.9;
     }
     
-    .semester-courses {
+    .semester-info {
       background: rgba(255,255,255,0.1);
       padding: 15px;
       border-radius: 8px;
       text-align: center;
     }
     
-    .semester-courses .number {
+    .semester-info .current {
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 5px;
     }
     
-    .semester-courses .label {
+    .semester-info .date {
       font-size: 0.9rem;
       opacity: 0.8;
     }
@@ -199,9 +199,9 @@
     }
     
     .card-icon.courses { background-color: var(--info); }
-    .card-icon.students { background-color: var(--success); }
-    .card-icon.grading { background-color: var(--warning); }
-    .card-icon.office { background-color: var(--danger); }
+    .card-icon.grades { background-color: var(--success); }
+    .card-icon.schedule { background-color: var(--warning); }
+    .card-icon.account { background-color: var(--danger); }
     
     .card-value {
       font-size: 1.8rem;
@@ -215,8 +215,8 @@
       font-size: 0.9rem;
     }
     
-    /* Today's Classes */
-    .todays-classes {
+    /* Upcoming Classes */
+    .upcoming-classes {
       background: white;
       border-radius: 10px;
       padding: 20px;
@@ -296,73 +296,50 @@
       color: var(--success);
     }
     
-    /* Grading Tasks */
-    .grading-tasks {
+    /* Quick Links */
+    .quick-links {
+      margin-bottom: 30px;
+    }
+    
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .link-card {
       background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    
-    .task-item {
+      border-radius: 8px;
+      padding: 15px;
       display: flex;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.3s;
     }
     
-    .task-item:last-child {
-      border-bottom: none;
+    .link-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
     
-    .task-icon {
-      width: 40px;
-      height: 40px;
+    .link-icon {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 15px;
-      background-color: rgba(208, 211, 51, 0.1);
-      color: var(--secondary);
-    }
-    
-    .task-content {
-      flex: 1;
-    }
-    
-    .task-title {
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-    
-    .task-description {
-      font-size: 0.8rem;
-      color: #666;
-    }
-    
-    .task-due {
-      font-size: 0.7rem;
-      color: #999;
-    }
-    
-    .task-actions {
-      display: flex;
-      align-items: center;
-    }
-    
-    .btn {
-      padding: 6px 12px;
-      border-radius: 5px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.3s;
-    }
-    
-    .btn-grade {
+      margin-bottom: 10px;
       background-color: var(--secondary);
       color: var(--primary);
+    }
+    
+    .link-title {
+      font-weight: 500;
+      margin-bottom: 5px;
     }
     
     @media (max-width: 768px) {
@@ -374,12 +351,12 @@
         display: none;
       }
       
-      .faculty-info {
+      .welcome-banner {
         flex-direction: column;
         text-align: center;
       }
       
-      .semester-courses {
+      .semester-info {
         margin-top: 15px;
       }
       
@@ -394,8 +371,8 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-header">
-        <img src="/assets/logo-white.png" alt="UOB Logo">
-        <h2>Faculty Portal</h2>
+        <img src="/images/BalamandLogo.png" alt="UOB Logo">
+        <h2>Student Portal</h2>
       </div>
       <div class="sidebar-menu">
         <div class="menu-item active">
@@ -407,24 +384,24 @@
           <span>My Courses</span>
         </div>
         <div class="menu-item">
-          <i class="fas fa-users"></i>
-          <span>Class Rosters</span>
-        </div>
-        <div class="fas fa-clipboard-list">
-          <i class="fas fa-clipboard-list"></i>
-          <span>Grade Center</span>
-        </div>
-        <div class="menu-item">
           <i class="fas fa-calendar-alt"></i>
-          <span>Schedule</span>
+          <span>Class Schedule</span>
         </div>
         <div class="menu-item">
-          <i class="fas fa-chalkboard-teacher"></i>
-          <span>Office Hours</span>
+          <i class="fas fa-graduation-cap"></i>
+          <span>Grades & Transcript</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <span>Tuition & Payments</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-user-graduate"></i>
+          <span>Academic Advisor</span>
         </div>
         <div class="menu-item">
           <i class="fas fa-cog"></i>
-          <span>Settings</span>
+          <span>Account Settings</span>
         </div>
       </div>
     </div>
@@ -432,22 +409,22 @@
     <!-- Main Content -->
     <div class="main-content">
       <div class="header">
-        <h1>Instructor Dashboard</h1>
+        <h1>Student Dashboard</h1>
         <div class="user-profile">
-          <img src="/assets/instructor-avatar.jpg" alt="Instructor Profile">
-          <span>Prof. Michael Brown</span>
+          <img src="/images/BalamandLogo.png" alt="Student Profile">
+          <span>John Doe</span>
         </div>
       </div>
       
-      <!-- Faculty Info -->
-      <div class="faculty-info">
-        <div class="faculty-text">
-          <h2>Computer Science Department</h2>
-          <p>Associate Professor | Faculty of Engineering</p>
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>Welcome back, John!</h2>
+          <p>Computer Science - Senior Year | ID: 20230045</p>
         </div>
-        <div class="semester-courses">
-          <div class="number">3</div>
-          <div class="label">Courses This Semester</div>
+        <div class="semester-info">
+          <div class="current">Fall 2023</div>
+          <div class="date">Sep 5 - Dec 20</div>
         </div>
       </div>
       
@@ -460,46 +437,46 @@
               <i class="fas fa-book"></i>
             </div>
           </div>
-          <div class="card-value">3</div>
-          <div class="card-description">Fall 2023 Semester</div>
+          <div class="card-value">5</div>
+          <div class="card-description">15 credit hours this semester</div>
         </div>
         
         <div class="card">
           <div class="card-header">
-            <div class="card-title">Total Students</div>
-            <div class="card-icon students">
-              <i class="fas fa-users"></i>
+            <div class="card-title">Current GPA</div>
+            <div class="card-icon grades">
+              <i class="fas fa-chart-line"></i>
             </div>
           </div>
-          <div class="card-value">87</div>
-          <div class="card-description">Across all sections</div>
+          <div class="card-value">3.72</div>
+          <div class="card-description">Top 15% of your class</div>
         </div>
         
         <div class="card">
           <div class="card-header">
-            <div class="card-title">Pending Grading</div>
-            <div class="card-icon grading">
-              <i class="fas fa-clipboard-check"></i>
+            <div class="card-title">Next Class</div>
+            <div class="card-icon schedule">
+              <i class="fas fa-clock"></i>
             </div>
           </div>
-          <div class="card-value">24</div>
-          <div class="card-description">Assignments to grade</div>
+          <div class="card-value">CS401</div>
+          <div class="card-description">Mon 10:00 AM - IT Building</div>
         </div>
         
         <div class="card">
           <div class="card-header">
-            <div class="card-title">Office Hours</div>
-            <div class="card-icon office">
-              <i class="fas fa-door-open"></i>
+            <div class="card-title">Account Balance</div>
+            <div class="card-icon account">
+              <i class="fas fa-dollar-sign"></i>
             </div>
           </div>
-          <div class="card-value">Today</div>
-          <div class="card-description">2:00 PM - 4:00 PM</div>
+          <div class="card-value">$1,250</div>
+          <div class="card-description">Due by October 15</div>
         </div>
       </div>
       
-      <!-- Today's Classes -->
-      <div class="todays-classes">
+      <!-- Upcoming Classes -->
+      <div class="upcoming-classes">
         <h2 class="section-title">
           <i class="fas fa-calendar-day"></i>
           Today's Classes
@@ -522,14 +499,29 @@
           
           <div class="class-item">
             <div class="class-info">
-              <h3 class="class-name">CS305 - Software Engineering</h3>
+              <h3 class="class-name">MATH302 - Linear Algebra</h3>
               <p class="class-time">
                 <i class="far fa-clock"></i>
                 1:00 PM - 2:30 PM
               </p>
               <p class="class-location">
                 <i class="fas fa-map-marker-alt"></i>
-                IT Building, Room 310
+                Science Building, Room 102
+              </p>
+            </div>
+            <div class="class-status status-upcoming">Upcoming</div>
+          </div>
+          
+          <div class="class-item">
+            <div class="class-info">
+              <h3 class="class-name">ENG205 - Technical Writing</h3>
+              <p class="class-time">
+                <i class="far fa-clock"></i>
+                3:00 PM - 4:30 PM
+              </p>
+              <p class="class-location">
+                <i class="fas fa-map-marker-alt"></i>
+                Humanities Building, Room 310
               </p>
             </div>
             <div class="class-status status-upcoming">Upcoming</div>
@@ -537,53 +529,39 @@
         </div>
       </div>
       
-      <!-- Grading Tasks -->
-      <div class="grading-tasks">
+      <!-- Quick Links -->
+      <div class="quick-links">
         <h2 class="section-title">
-          <i class="fas fa-clipboard-list"></i>
-          Pending Grading Tasks
+          <i class="fas fa-link"></i>
+          Quick Links
         </h2>
-        <div class="task-list">
-          <div class="task-item">
-            <div class="task-icon">
+        <div class="links-grid">
+          <div class="link-card">
+            <div class="link-icon">
               <i class="fas fa-file-alt"></i>
             </div>
-            <div class="task-content">
-              <h3 class="task-title">CS401 - Assignment #3</h3>
-              <p class="task-description">Database Design Project - 12 submissions to grade</p>
-              <p class="task-due">Due: October 15, 2023</p>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn-grade">Grade Now</button>
-            </div>
+            <h3 class="link-title">Course Registration</h3>
           </div>
           
-          <div class="task-item">
-            <div class="task-icon">
-              <i class="fas fa-file-code"></i>
+          <div class="link-card">
+            <div class="link-icon">
+              <i class="fas fa-print"></i>
             </div>
-            <div class="task-content">
-              <h3 class="task-title">CS305 - Midterm Exam</h3>
-              <p class="task-description">Software Design Patterns - 25 exams to grade</p>
-              <p class="task-due">Due: October 20, 2023</p>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn-grade">Grade Now</button>
-            </div>
+            <h3 class="link-title">Print Schedule</h3>
           </div>
           
-          <div class="task-item">
-            <div class="task-icon">
-              <i class="fas fa-project-diagram"></i>
+          <div class="link-card">
+            <div class="link-icon">
+              <i class="fas fa-book-open"></i>
             </div>
-            <div class="task-content">
-              <h3 class="task-title">CS401 - Project Proposal</h3>
-              <p class="task-description">Final Project Proposals - 8 to review</p>
-              <p class="task-due">Due: October 25, 2023</p>
+            <h3 class="link-title">Course Catalog</h3>
+          </div>
+          
+          <div class="link-card">
+            <div class="link-icon">
+              <i class="fas fa-envelope"></i>
             </div>
-            <div class="task-actions">
-              <button class="btn btn-grade">Grade Now</button>
-            </div>
+            <h3 class="link-title">Contact Advisor</h3>
           </div>
         </div>
       </div>

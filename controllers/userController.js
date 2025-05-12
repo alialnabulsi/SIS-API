@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const UserService = require("../services/userService");
 const UserRepository = require("../repositories/userRepository");
+const UserRoleService = require("../services/userRoleService");
 
 
 
@@ -121,10 +122,17 @@ class UserController {
             if (user.isLocked) {
                 return res.status(403).json({ message: 'Account is locked' });
             }
-
+            const userRole = await UserRoleService.getUserRolesByUserID(user.userID);
             await UserService.loginUser(user.userID);
-
-            res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\home.ejs',{user : user});
+            if(userRole[0].roleID == 1){
+                res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\adminDashboard.ejs');
+            }else if(userRole[0].roleID == 2){
+                res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\advisorDashboard.ejs');
+            }else if(userRole[0].roleID == 3){
+                res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\instructorDashboard.ejs');
+            }else if(userRole[0].roleID == 4){
+                res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\studentDashboard.ejs');
+            }
         } catch (e) {
             if (e.statusCode === 401) {
                 try {
