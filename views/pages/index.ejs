@@ -1,217 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title><%= title || 'University of Balamand SIS' %></title>
-  <style>@import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
-@import url("https://use.fontawesome.com/releases/v6.5.1/css/all.css");
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="University of Balamand Secure Login Portal">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>University of Balamand - Secure Login</title>
+  <style>
+    :root {
+      --primary-color: #5a2d9a;
+      --primary-light: #6d44b8;
+      --primary-dark: #4a2580;
+      --text-light: #f8f9fa;
+      --text-dark: #212529;
+      --bg-overlay: rgba(15, 12, 41, 0.85);
+      --error-color: #e63946;
+      --success-color: #2a9d8f;
+    }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #25252b;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-* {
-  font-family: "Poppins", sans-serif;
-}
+    body {
+      font-family: 'Jost', sans-serif;
+      background: url('/images/uni3.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
 
-@property --a {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
+    body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-overlay);
+      z-index: -1;
+    }
 
-.box {
-  position: relative;
-  width: 400px;
-  height: 200px;
-  background: repeating-conic-gradient(
-    from var(--a),
-    #583cd4 0%,
-    #472ec4 5%,
-    transparent 5%,
-    transparent 40%,
-    #3865ae 50%
-  );
-  filter: drop-shadow(0 15px 50px #000);
-  border-radius: 20px;
-  animation: rotating 4s linear infinite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.5s;
-}
+    .main {
+      width: 100%;
+      max-width: 460px;
+      min-height: 600px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
 
-@keyframes rotating {
-  0% {
-    --a: 0deg;
-  }
+    .logo-container {
+      margin-bottom: 30px;
+      text-align: center;
+    }
 
-  0% {
-    --a: 360deg;
-  }
-}
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 10px;
+    }
 
-.box::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: repeating-conic-gradient(
-    from var(--a),
-    #ffe645 0%,
-    #8fff45 5%,
-    transparent 5%,
-    transparent 40%,
-    #b2ff45 50%
-  );
-  filter: drop-shadow(0 15px 50px #000);
-  border-radius: 20px;
-  animation: rotating 4s linear infinite;
-  animation-delay: -1s;
-}
+    .university-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      margin-top: 8px;
+    }
 
-.box::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  background: #2d2d39;
-  border-radius: 15px;
-  border: 8px solid #25252b;
-}
+    .message-box {
+      width: 100%;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
 
-.box:hover {
-  width: 450px;
-  height: 500px;
-}
+    .message-box span {
+      position: absolute;
+      opacity: 0;
+      white-space: normal;
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease;
+      width: 100%;
+      padding: 0 10px;
+      transform: translateY(10px);
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
 
-.box:hover .login {
-  inset: 40px;
-}
+    .message-box span.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.box:hover .loginBx {
-  transform: translateY(0px);
-}
+    .form-box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-.login {
-  position: absolute;
-  inset: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  border-radius: 10px;
-  background: #00000033;
-  color: #fff;
-  z-index: 1000;
-  box-shadow: inset 0 10px 20px #00000080;
-  border-bottom: 2px solid #ffffff80;
-  transition: 0.5s;
-  overflow: hidden;
-}
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-.loginBx {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 20px;
-  width: 70%;
-  transform: translateY(126px);
-  transition: 0.5s;
-}
+    .input-group {
+      position: relative;
+      width: 100%;
+    }
 
-h2 {
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-}
+    label {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      color: var(--text-dark);
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 0 5px;
+      font-size: 0.9rem;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
 
-h2 i {
-  color: #b7ad1a;
-  text-shadow: 0 0 5px #000000, 0 0 20px #b59f14;
-}
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      height: 50px;
+      padding: 15px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
 
-input {
-  width: 100%;
-  padding: 10px 20px;
-  outline: none;
-  border: none;
-  font-size: 1em;
-  color: #fff;
-  background: #0000001a;
-  border: 2px solid #fff;
-  border-radius: 30px;
-}
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 4px 12px rgba(106, 70, 184, 0.2);
+      background-color: #fff;
+    }
 
-input::placeholder {
-  color: #999;
-}
+    input:focus + label,
+    input:not(:placeholder-shown) + label {
+      top: -10px;
+      left: 10px;
+      font-size: 0.8rem;
+      color: var(--primary-dark);
+      background-color: white;
+    }
 
-input[type="submit"] {
-  background: #d0d333;
-  border: none;
-  font-weight: 500;
-  color: #111;
-  cursor: pointer;
-  transition: 0.5s;
-}
+    button {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(106, 70, 184, 0.4);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
 
-input[type="submit"]:hover {
-  box-shadow: 0 0 10px #bce721, 0 0 60px #e7e009;
-}
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(106, 70, 184, 0.5);
+    }
 
-.group {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
+    button:active {
+      transform: translateY(0);
+    }
 
-.group a {
-  color: #fff;
-  text-decoration: none;
-}
+    button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.7s ease-in-out;
+    }
 
-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 35px;
-}
+    button:hover::after {
+      left: 150%;
+    }
 
-.group a:nth-child(2) {
-  color: #feee03;
-  font-weight: 600;
-}</style>
+    .loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .loading::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      border-radius: inherit;
+    }
+
+    .loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer-links {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .footer-links span {
+      margin: 0 10px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 0.9rem;
+      margin-top: -15px;
+      text-align: left;
+      width: 100%;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .main {
+        padding: 30px 20px;
+        min-height: 560px;
+      }
+      
+      .logo {
+        width: 100px;
+      }
+
+      .message-box {
+        height: 70px;
+        margin-bottom: 20px;
+      }
+
+      form {
+        gap: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="box">
-    <div class="login">
-      <div class="loginBx">
-        <h2>
-          <i class="fa-solid fa-right-to-bracket"></i>
-          UOB
-          <i class="fa-solid fa-graduation-cap"></i>
-        </h2>
-        <form action="/api/sis/user/login" method="POST">
-          <input type="email" name="email" placeholder="Email" required>
-          <input type="password" name="password" placeholder="Password" required>
-          <input type="submit" value="Login">
-          <div class="group">
-            <a href="/forgot-password">Forgot Password</a>
-            <a href="/register">Register</a>
-          </div>
-        </form>
-        <% if (typeof error !== 'undefined') { %>
-          <p class="error-message"><%= error %></p>
-        <% } %>
-      </div>
+  <div class="main">
+    <div class="logo-container">
+      <img class="logo" src="/images/BalamandLogo.png" alt="University of Balamand Logo" />
+      <div class="university-name">University of Balamand</div>
+    </div>
+
+    <div class="message-box">
+      <span class="active">Secure Login Portal</span>
+      <span>For authorized university personnel and students only</span>
+      <span>Please use your institutional credentials</span>
+    </div>
+
+    <div class="form-box">
+      <form id="loginForm" action="/api/sis/user/login" method="POST">
+        <input type="hidden" name="_csrf" value="<!-- Server should insert CSRF token here -->">
+        
+        <div class="input-group">
+          <input type="email" name="email" id="email" placeholder=" " required />
+          <label for="email">University Email</label>
+        </div>
+        <div class="error-message" id="email-error"></div>
+        
+        <div class="input-group">
+          <input type="password" name="password" id="password" placeholder=" " required />
+          <label for="password">Password</label>
+        </div>
+        <div class="error-message" id="password-error"></div>
+        
+        <button type="submit" id="submitBtn">
+          <span>LOGIN</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="footer-links">
+      <a href="/forgot-password">Forgot Password?</a>
+      <span>|</span>
+      <a href="/help">Need Help?</a>
     </div>
   </div>
+  <!--script for error handling and message animation logic-->
+  <script>
+    const messages = document.querySelectorAll('.message-box span');
+    let current = 0;
+
+    setInterval(() => {
+      messages[current].classList.remove('active');
+      current = (current + 1) % messages.length;
+      messages[current].classList.add('active');
+    }, 4000);
+  </script>
 </body>
 </html>

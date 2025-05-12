@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructor Dashboard | UOB SIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2d2d39;
+      --secondary: #d0d333;
+      --light: #f4f4f9;
+      --dark: #1a1a24;
+      --success: #28a745;
+      --info: #17a2b8;
+      --warning: #ffc107;
+      --danger: #dc3545;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      background-color: var(--primary);
+      color: white;
+      padding: 20px 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+    }
+    
+    .sidebar-header img {
+      height: 40px;
+      margin-right: 10px;
+    }
+    
+    .sidebar-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .menu-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .menu-item:hover, .menu-item.active {
+      background-color: rgba(255,255,255,0.1);
+      border-left: 3px solid var(--secondary);
+    }
+    
+    .menu-item i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      padding: 20px;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    /* Faculty Info */
+    .faculty-info {
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      color: white;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faculty-text h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .faculty-text p {
+      opacity: 0.9;
+    }
+    
+    .semester-courses {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .semester-courses .number {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .semester-courses .label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    
+    .card-icon.courses { background-color: var(--info); }
+    .card-icon.students { background-color: var(--success); }
+    .card-icon.grading { background-color: var(--warning); }
+    .card-icon.office { background-color: var(--danger); }
+    
+    .card-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+    
+    .card-description {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    /* Today's Classes */
+    .todays-classes {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title i {
+      margin-right: 10px;
+    }
+    
+    .class-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .class-item:last-child {
+      border-bottom: none;
+    }
+    
+    .class-info {
+      flex: 1;
+    }
+    
+    .class-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .class-time {
+      font-size: 0.9rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+    }
+    
+    .class-time i {
+      margin-right: 5px;
+    }
+    
+    .class-location {
+      font-size: 0.9rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+    }
+    
+    .class-location i {
+      margin-right: 5px;
+    }
+    
+    .class-status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-upcoming {
+      background-color: rgba(208, 211, 51, 0.1);
+      color: var(--secondary);
+    }
+    
+    .status-in-progress {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: var(--success);
+    }
+    
+    /* Grading Tasks */
+    .grading-tasks {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .task-item {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .task-item:last-child {
+      border-bottom: none;
+    }
+    
+    .task-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      background-color: rgba(208, 211, 51, 0.1);
+      color: var(--secondary);
+    }
+    
+    .task-content {
+      flex: 1;
+    }
+    
+    .task-title {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .task-description {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .task-due {
+      font-size: 0.7rem;
+      color: #999;
+    }
+    
+    .task-actions {
+      display: flex;
+      align-items: center;
+    }
+    
+    .btn {
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-grade {
+      background-color: var(--secondary);
+      color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+      
+      .faculty-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .semester-courses {
+        margin-top: 15px;
+      }
+      
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img src="/assets/logo-white.png" alt="UOB Logo">
+        <h2>Faculty Portal</h2>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-item active">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-book"></i>
+          <span>My Courses</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-users"></i>
+          <span>Class Rosters</span>
+        </div>
+        <div class="fas fa-clipboard-list">
+          <i class="fas fa-clipboard-list"></i>
+          <span>Grade Center</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Schedule</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span>Office Hours</span>
+        </div>
+        <div class="menu-item">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1>Instructor Dashboard</h1>
+        <div class="user-profile">
+          <img src="/assets/instructor-avatar.jpg" alt="Instructor Profile">
+          <span>Prof. Michael Brown</span>
+        </div>
+      </div>
+      
+      <!-- Faculty Info -->
+      <div class="faculty-info">
+        <div class="faculty-text">
+          <h2>Computer Science Department</h2>
+          <p>Associate Professor | Faculty of Engineering</p>
+        </div>
+        <div class="semester-courses">
+          <div class="number">3</div>
+          <div class="label">Courses This Semester</div>
+        </div>
+      </div>
+      
+      <!-- Stats Cards -->
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Current Courses</div>
+            <div class="card-icon courses">
+              <i class="fas fa-book"></i>
+            </div>
+          </div>
+          <div class="card-value">3</div>
+          <div class="card-description">Fall 2023 Semester</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Total Students</div>
+            <div class="card-icon students">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+          <div class="card-value">87</div>
+          <div class="card-description">Across all sections</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Pending Grading</div>
+            <div class="card-icon grading">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+          </div>
+          <div class="card-value">24</div>
+          <div class="card-description">Assignments to grade</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Office Hours</div>
+            <div class="card-icon office">
+              <i class="fas fa-door-open"></i>
+            </div>
+          </div>
+          <div class="card-value">Today</div>
+          <div class="card-description">2:00 PM - 4:00 PM</div>
+        </div>
+      </div>
+      
+      <!-- Today's Classes -->
+      <div class="todays-classes">
+        <h2 class="section-title">
+          <i class="fas fa-calendar-day"></i>
+          Today's Classes
+        </h2>
+        <div class="class-list">
+          <div class="class-item">
+            <div class="class-info">
+              <h3 class="class-name">CS401 - Advanced Database Systems</h3>
+              <p class="class-time">
+                <i class="far fa-clock"></i>
+                10:00 AM - 11:30 AM
+              </p>
+              <p class="class-location">
+                <i class="fas fa-map-marker-alt"></i>
+                IT Building, Room 205
+              </p>
+            </div>
+            <div class="class-status status-upcoming">Upcoming</div>
+          </div>
+          
+          <div class="class-item">
+            <div class="class-info">
+              <h3 class="class-name">CS305 - Software Engineering</h3>
+              <p class="class-time">
+                <i class="far fa-clock"></i>
+                1:00 PM - 2:30 PM
+              </p>
+              <p class="class-location">
+                <i class="fas fa-map-marker-alt"></i>
+                IT Building, Room 310
+              </p>
+            </div>
+            <div class="class-status status-upcoming">Upcoming</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Grading Tasks -->
+      <div class="grading-tasks">
+        <h2 class="section-title">
+          <i class="fas fa-clipboard-list"></i>
+          Pending Grading Tasks
+        </h2>
+        <div class="task-list">
+          <div class="task-item">
+            <div class="task-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="task-content">
+              <h3 class="task-title">CS401 - Assignment #3</h3>
+              <p class="task-description">Database Design Project - 12 submissions to grade</p>
+              <p class="task-due">Due: October 15, 2023</p>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn-grade">Grade Now</button>
+            </div>
+          </div>
+          
+          <div class="task-item">
+            <div class="task-icon">
+              <i class="fas fa-file-code"></i>
+            </div>
+            <div class="task-content">
+              <h3 class="task-title">CS305 - Midterm Exam</h3>
+              <p class="task-description">Software Design Patterns - 25 exams to grade</p>
+              <p class="task-due">Due: October 20, 2023</p>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn-grade">Grade Now</button>
+            </div>
+          </div>
+          
+          <div class="task-item">
+            <div class="task-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <div class="task-content">
+              <h3 class="task-title">CS401 - Project Proposal</h3>
+              <p class="task-description">Final Project Proposals - 8 to review</p>
+              <p class="task-due">Due: October 25, 2023</p>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn-grade">Grade Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

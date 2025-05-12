@@ -43,6 +43,8 @@ app.use(express.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('public'));
+
 
 // Use Routes
 app.use('/api/sis/admin', adminRoute);
