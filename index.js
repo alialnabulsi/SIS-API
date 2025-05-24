@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors'); //to handle requests from different domains
 const bodyParser = require('body-parser'); //for converting to json objects
 const momnent =  require("moment");
+const path = require('path');
+
 
 //Import Routes
 const adminRoute = require('./routes/adminRoute');
@@ -41,6 +43,7 @@ const app = express();
 // Middleware
 app.use(express.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views/pages'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -78,7 +81,7 @@ app.use('/api/sis/user', userRoute);
 
 app.get('/', (req, res) => {
 
-    res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\index.ejs', { title: 'Home' });
+    res.render('index.ejs', { title: 'Home' });
 });
 // Start the server
 const PORT = process.env.PORT || 5000;
