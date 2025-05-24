@@ -242,6 +242,7 @@ class UserRepository {
     }
 
     static async validateCredentials(email, password) {
+        
         try {
             let sql = `SELECT * FROM user WHERE email = ?`;
             const [row] = await database.query(sql, [email]);
@@ -261,6 +262,7 @@ class UserRepository {
 
                 throw error;
             }
+
 
             return user;
         } catch (e) {

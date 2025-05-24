@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <title>University of Balamand - Secure Login</title>
   <style>
     :root {
@@ -286,6 +287,95 @@
       display: none;
     }
 
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: rgba(30, 27, 57, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: white;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-btn-primary {
+      background: var(--primary-light);
+      color: white;
+    }
+
+    .modal-btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .modal-btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .modal-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
     @media (max-width: 480px) {
       .main {
         padding: 30px 20px;
@@ -303,6 +393,10 @@
 
       form {
         gap: 15px;
+      }
+
+      .modal-content {
+        padding: 20px;
       }
     }
   </style>
@@ -343,13 +437,58 @@
     </div>
 
     <div class="footer-links">
-      <a href="/forgot-password">Forgot Password?</a>
+      <a href="#" id="forgotPasswordLink">Forgot Password?</a>
       <span>|</span>
-      <a href="/help">Need Help?</a>
+      <a href="#" id="needHelpLink">Need Help?</a>
     </div>
   </div>
-  <!--script for error handling and message animation logic-->
+
+  <!-- Forgot Password Modal -->
+  <div class="modal" id="forgotPasswordModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Reset Your Password</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Enter your university email address and we'll send you a link to reset your password.</p>
+        <div class="input-group" style="margin-top: 20px;">
+          <input type="email" id="resetEmail" placeholder=" " required />
+          <label for="resetEmail">University Email</label>
+        </div>
+        <div class="error-message" id="reset-email-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary close-modal">Cancel</button>
+        <button class="modal-btn modal-btn-primary" id="sendResetLink">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Need Help Modal -->
+  <div class="modal" id="needHelpModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Need Help?</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>If you're having trouble accessing your account, please contact the IT Help Desk:</p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+          <li>Email: <a href="mailto:helpdesk@balamand.edu.lb" style="color: var(--primary-light);">helpdesk@balamand.edu.lb</a></li>
+          <li>Phone: +961 6 930 250 ext. 5555</li>
+          <li>Location: IT Building, Room 101</li>
+        </ul>
+        <p>Hours of operation: Sunday to Friday, 8:00 AM to 5:00 PM</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary close-modal">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Message rotation
     const messages = document.querySelectorAll('.message-box span');
     let current = 0;
 
@@ -358,6 +497,149 @@
       current = (current + 1) % messages.length;
       messages[current].classList.add('active');
     }, 4000);
+
+    // Modal functionality
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const needHelpLink = document.getElementById('needHelpLink');
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    const needHelpModal = document.getElementById('needHelpModal');
+    const closeModals = document.querySelectorAll('.close-modal');
+    const sendResetLink = document.getElementById('sendResetLink');
+
+    // Open modals
+    forgotPasswordLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotPasswordModal.style.display = 'flex';
+    });
+
+    needHelpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      needHelpModal.style.display = 'flex';
+    });
+
+    // Close modals
+    closeModals.forEach(btn => {
+      btn.addEventListener('click', () => {
+        forgotPasswordModal.style.display = 'none';
+        needHelpModal.style.display = 'none';
+      });
+    });
+
+    // Close when clicking outside modal content
+    window.addEventListener('click', (e) => {
+      if (e.target === forgotPasswordModal) {
+        forgotPasswordModal.style.display = 'none';
+      }
+      if (e.target === needHelpModal) {
+        needHelpModal.style.display = 'none';
+      }
+    });
+
+    // Form validation
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Reset errors
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+      
+      // Validate email
+      if (!emailInput.value || !emailInput.value.includes('@')) {
+        emailError.textContent = 'Please enter a valid university email';
+        emailError.style.display = 'block';
+        return;
+      }
+      
+      // Validate password
+      if (!passwordInput.value || passwordInput.value.length < 8) {
+        passwordError.textContent = 'Password must be at least 8 characters';
+        passwordError.style.display = 'block';
+        return;
+      }
+      
+      // Show loading state
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.classList.add('loading');
+      submitBtn.innerHTML = '';
+      
+      try {
+        // Simulate API call (replace with actual fetch)
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // For demo purposes - in real app, handle actual response
+        loginForm.submit();
+      } catch (error) {
+        // Handle error response
+        emailError.textContent = 'Invalid email or password';
+        emailError.style.display = 'block';
+        passwordError.textContent = 'Invalid email or password';
+        passwordError.style.display = 'block';
+      } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.innerHTML = '<span>LOGIN</span>';
+      }
+    });
+
+    // Forgot password form
+    sendResetLink.addEventListener('click', async () => {
+      const resetEmail = document.getElementById('resetEmail');
+      const resetEmailError = document.getElementById('reset-email-error');
+      
+      resetEmailError.style.display = 'none';
+      
+      if (!resetEmail.value || !resetEmail.value.includes('@')) {
+        resetEmailError.textContent = 'Please enter a valid university email';
+        resetEmailError.style.display = 'block';
+        return;
+      }
+      
+      sendResetLink.textContent = 'Sending...';
+      sendResetLink.disabled = true;
+      
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Show success message
+        const modalBody = document.querySelector('#forgotPasswordModal .modal-body');
+        modalBody.innerHTML = `
+          <div style="text-align: center; padding: 20px 0;">
+            <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success-color); margin-bottom: 15px;"></i>
+            <h3 style="margin-bottom: 10px;">Reset Link Sent!</h3>
+            <p>We've sent a password reset link to ${resetEmail.value}. Please check your email.</p>
+          </div>
+        `;
+        
+        document.querySelector('#forgotPasswordModal .modal-footer').style.display = 'none';
+        
+        setTimeout(() => {
+          forgotPasswordModal.style.display = 'none';
+          // Reset modal for next use
+          modalBody.innerHTML = `
+            <p>Enter your university email address and we'll send you a link to reset your password.</p>
+            <div class="input-group" style="margin-top: 20px;">
+              <input type="email" id="resetEmail" placeholder=" " required />
+              <label for="resetEmail">University Email</label>
+            </div>
+            <div class="error-message" id="reset-email-error"></div>
+          `;
+          document.querySelector('#forgotPasswordModal .modal-footer').style.display = 'flex';
+          resetEmail.value = '';
+        }, 3000);
+      } catch (error) {
+        resetEmailError.textContent = 'Failed to send reset link. Please try again.';
+        resetEmailError.style.display = 'block';
+      } finally {
+        sendResetLink.textContent = 'Send Reset Link';
+        sendResetLink.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>

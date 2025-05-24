@@ -119,11 +119,12 @@ class UserController {
         try {
             const { email, password } = req.body;
             const user = await UserService.validateCredentials(email, password);
-            
+
             if (user.isLocked) {
                 return res.status(403).json({ message: 'Account is locked' });
             }
             const userRole = await UserRoleService.getUserRolesByUserID(user.userID);
+
             await UserService.loginUser(user.userID);
             if(userRole[0].roleID == 1){
                 res.render('C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\adminDashboard.ejs');
@@ -149,7 +150,7 @@ class UserController {
                 } catch (err) {
 
                 }
-                res.redirect("C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\index.ejs").json({user : user});
+                res.redirect("C:\\Users\\user\\Documents\\VS Code Projects\\CSIS-228-Project\\SIS-Project\\views\\pages\\index.ejs");
             } else {
                 res.status(500).json({ message: 'Internal server error', error: e.message });
             }
