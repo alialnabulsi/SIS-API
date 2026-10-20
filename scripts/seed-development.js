@@ -308,7 +308,8 @@ async function seedDevelopmentData() {
     );
     const studentProgram = (
       await client.query(
-        `SELECT student_user_id, program_id, program_status, declared_on
+        `SELECT student_user_id, program_id, program_status,
+                declared_on::text AS declared_on
          FROM student_program
          WHERE student_user_id = $1 AND program_id = $2`,
         ['DEVSTU001', references.programId]
@@ -328,12 +329,21 @@ async function seedDevelopmentData() {
          ON CONFLICT (user_id) DO NOTHING`,
         [userId, references.departmentId]
       );
-      await verifySubtype(client, 'instructor', userId, {
+      const instructor = (
+        await client.query(
+          `SELECT user_id, role_code, department_id,
+                  hire_date::text AS hire_date
+           FROM instructor
+           WHERE user_id = $1`,
+          [userId]
+        )
+      ).rows[0];
+      assertMatchingRecord(instructor, {
         user_id: userId,
         role_code: 'instructor',
         department_id: references.departmentId,
         hire_date: '2026-01-15',
-      });
+      }, `instructor subtype for ${userId}`);
     }
 
     await client.query(
