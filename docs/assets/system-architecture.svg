@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">SIS API System Architecture</title>
+  <desc id="desc">Architecture diagram showing Balamandian Mobile App communicating with Balamandian Backend, which communicates with SIS API modules and PostgreSQL SIS Database.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 34px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 18px 'Segoe UI', Inter, Arial, sans-serif; fill: #475569; }
+      .section { font: 700 18px 'Segoe UI', Inter, Arial, sans-serif; fill: #1e293b; }
+      .label { font: 700 16px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
+      .text { font: 400 15px 'Segoe UI', Inter, Arial, sans-serif; fill: #334155; }
+      .small { font: 400 13px 'Segoe UI', Inter, Arial, sans-serif; fill: #64748b; }
+      .chip { font: 600 13px 'Segoe UI', Inter, Arial, sans-serif; fill: #1d4ed8; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 22; }
+      .client { fill: #eff6ff; stroke: #93c5fd; }
+      .backend { fill: #ecfeff; stroke: #67e8f9; }
+      .service { fill: #f8fafc; stroke: #cbd5e1; }
+      .db { fill: #f5f3ff; stroke: #c4b5fd; }
+      .accent { fill: #dbeafe; stroke: #60a5fa; }
+      .pill { fill: #eff6ff; stroke: #bfdbfe; rx: 14; }
+      .shadow { filter: url(#shadow); }
+      .arrow { stroke: #475569; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .arrow2 { stroke: #0f766e; stroke-width: 2.4; fill: none; marker-end: url(#arrow2); }
+      .dashed { stroke-dasharray: 8 7; }
+    </style>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow2" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="900"/>
+
+  <text class="title" x="70" y="80">SIS API — System Architecture</text>
+  <text class="subtitle" x="70" y="112">Backend-to-backend university identity verification and member data retrieval for Balamandian.</text>
+
+  <!-- Left column -->
+  <rect class="box client shadow" x="70" y="180" width="260" height="160" rx="22"/>
+  <text class="section" x="100" y="220">Client Layer</text>
+  <text class="label" x="100" y="260">Balamandian Mobile App</text>
+  <text class="text" x="100" y="288">Student-facing mobile application</text>
+  <text class="text" x="100" y="313">for signup, login, and profile flows.</text>
+  <rect class="pill" x="100" y="360" width="126" height="30"/>
+  <text class="chip" x="115" y="380">HTTPS to backend</text>
+
+  <rect class="box backend shadow" x="70" y="430" width="260" height="210" rx="22"/>
+  <text class="section" x="100" y="470">Application Backend</text>
+  <text class="label" x="100" y="510">Balamandian Backend</text>
+  <text class="text" x="100" y="538">Owns application accounts, OTP,</text>
+  <text class="text" x="100" y="563">session creation, and business logic.</text>
+  <text class="small" x="100" y="605">Consumes SIS API using a protected</text>
+  <text class="small" x="100" y="627">service key over backend-to-backend requests.</text>
+
+  <!-- Right / Main block -->
+  <rect class="box shadow" x="410" y="160" width="910" height="620" rx="28"/>
+  <text class="section" x="445" y="205">Standalone SIS System</text>
+  <text class="small" x="445" y="230">Independent university information system used primarily for credential verification and read-only member retrieval.</text>
+
+  <!-- API core -->
+  <rect class="box accent shadow" x="460" y="275" width="350" height="170" rx="22"/>
+  <text class="label" x="490" y="320">Express REST API</text>
+  <text class="text" x="490" y="350">Secure server-to-server endpoints:</text>
+  <text class="small" x="520" y="382">• POST /api/v1/auth/verify</text>
+  <text class="small" x="520" y="406">• GET /api/v1/members/:userId</text>
+
+  <!-- Modules -->
+  <rect class="box service shadow" x="460" y="495" width="160" height="115" rx="18"/>
+  <text class="label" x="488" y="540">Auth Module</text>
+  <text class="small" x="488" y="566">Verifies SIS ID/email</text>
+  <text class="small" x="488" y="586">and bcrypt password.</text>
+
+  <rect class="box service shadow" x="650" y="495" width="160" height="115" rx="18"/>
+  <text class="label" x="672" y="540">Members Module</text>
+  <text class="small" x="675" y="566">Returns roles, campus,</text>
+  <text class="small" x="680" y="586">program, faculty data.</text>
+
+  <!-- Shared middleware / security -->
+  <rect class="box service shadow" x="860" y="275" width="210" height="170" rx="22"/>
+  <text class="label" x="890" y="320">Shared Middleware</text>
+  <text class="small" x="890" y="352">• Service API key auth</text>
+  <text class="small" x="890" y="378">• Request validation</text>
+  <text class="small" x="890" y="404">• Rate limiting</text>
+  <text class="small" x="890" y="430">• Centralized error handling</text>
+
+  <!-- DB -->
+  <g transform="translate(1110,300)" class="shadow">
+    <ellipse cx="105" cy="22" rx="95" ry="22" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+    <rect x="10" y="22" width="190" height="165" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <ellipse cx="105" cy="187" rx="95" ry="22" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text class="label" x="54" y="70">PostgreSQL</text>
+    <text class="small" x="46" y="98">SIS relational database</text>
+    <text class="small" x="34" y="126">• users and roles</text>
+    <text class="small" x="34" y="148">• students and campuses</text>
+    <text class="small" x="34" y="170">• programs, faculty, departments</text>
+  </g>
+
+  <!-- arrows -->
+  <path class="arrow" d="M330 260 C380 260, 380 330, 450 330"/>
+  <text class="small" x="348" y="248">App requests</text>
+  <path class="arrow2" d="M330 535 C395 535, 395 360, 450 360"/>
+  <text class="small" x="345" y="500">Protected API requests</text>
+
+  <path class="arrow" d="M635 445 L540 495"/>
+  <path class="arrow" d="M635 445 L730 495"/>
+  <path class="arrow" d="M810 360 L860 360"/>
+  <path class="arrow" d="M1070 360 L1110 360"/>
+  <path class="arrow" d="M620 552 C760 552, 915 552, 1080 552"/>
+  <path class="arrow" d="M810 552 C890 552, 960 552, 1080 552"/>
+
+  <!-- Footer notes -->
+  <rect class="box" x="460" y="655" width="760" height="90" rx="18"/>
+  <text class="label" x="490" y="692">Responsibility Boundary</text>
+  <text class="text" x="490" y="718">SIS verifies existing university credentials and provides institutional member data.</text>
+  <text class="text" x="490" y="740">Balamandian independently manages OTP verification, application accounts, and sessions.</text>
+</svg>

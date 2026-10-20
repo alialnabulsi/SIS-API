@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">SIS API Authentication Flow</title>
+  <desc id="desc">Sequence flow diagram showing mobile app login and signup going through Balamandian backend to the SIS API and PostgreSQL database.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 34px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 18px 'Segoe UI', Inter, Arial, sans-serif; fill: #475569; }
+      .laneTitle { font: 700 16px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
+      .text { font: 400 14px 'Segoe UI', Inter, Arial, sans-serif; fill: #334155; }
+      .small { font: 400 12.5px 'Segoe UI', Inter, Arial, sans-serif; fill: #64748b; }
+      .label { font: 700 15px 'Segoe UI', Inter, Arial, sans-serif; fill: #1e293b; }
+      .step { font: 600 14px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 16; }
+      .client { fill: #eff6ff; stroke: #93c5fd; }
+      .backend { fill: #ecfeff; stroke: #67e8f9; }
+      .service { fill: #f8fafc; stroke: #cbd5e1; }
+      .db { fill: #f5f3ff; stroke: #c4b5fd; }
+      .success { fill: #ecfdf5; stroke: #86efac; }
+      .warn { fill: #fff7ed; stroke: #fdba74; }
+      .line { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 8 8; }
+      .arrow { stroke: #334155; stroke-width: 2.3; fill: none; marker-end: url(#arrow); }
+      .return { stroke: #0f766e; stroke-width: 2.1; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow2); }
+      .connector { stroke: #64748b; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#334155"/>
+    </marker>
+    <marker id="arrow2" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#0f766e"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+
+  <rect class="bg" width="1600" height="980"/>
+  <text class="title" x="60" y="72">SIS API — Authentication &amp; Member Retrieval Flow</text>
+  <text class="subtitle" x="60" y="104">Sequence showing how Balamandian uses the SIS API for credential verification and trusted member lookup.</text>
+
+  <!-- Lanes -->
+  <g filter="url(#shadow)">
+    <rect class="box client" x="70" y="150" width="220" height="74" rx="18"/>
+    <text class="laneTitle" x="110" y="193">Balamandian Mobile App</text>
+
+    <rect class="box backend" x="380" y="150" width="240" height="74" rx="18"/>
+    <text class="laneTitle" x="442" y="193">Balamandian Backend</text>
+
+    <rect class="box service" x="740" y="150" width="220" height="74" rx="18"/>
+    <text class="laneTitle" x="805" y="193">SIS API</text>
+
+    <rect class="box db" x="1070" y="150" width="250" height="74" rx="18"/>
+    <text class="laneTitle" x="1128" y="193">PostgreSQL SIS Database</text>
+  </g>
+
+  <line class="line" x1="180" y1="225" x2="180" y2="900"/>
+  <line class="line" x1="500" y1="225" x2="500" y2="900"/>
+  <line class="line" x1="850" y1="225" x2="850" y2="900"/>
+  <line class="line" x1="1195" y1="225" x2="1195" y2="900"/>
+
+  <!-- signup flow area -->
+  <rect class="box" x="60" y="250" width="1480" height="290" rx="22" fill="#ffffff"/>
+  <text class="label" x="95" y="290">A. First-time signup / login verification</text>
+  <text class="small" x="95" y="313">The mobile app submits SIS credentials to Balamandian. The backend authenticates itself to SIS using a service API key.</text>
+
+  <!-- steps -->
+  <rect class="box" x="95" y="340" width="170" height="62" rx="14" fill="#ffffff"/>
+  <text class="step" x="113" y="366">1. User enters</text>
+  <text class="text" x="113" y="387">SIS ID/email + password</text>
+
+  <path class="arrow" d="M265 370 L490 370"/>
+  <text class="small" x="314" y="357">HTTPS request</text>
+
+  <rect class="box" x="415" y="335" width="170" height="72" rx="14" fill="#ffffff"/>
+  <text class="step" x="433" y="360">2. Validate input</text>
+  <text class="text" x="433" y="381">Prepare backend-to-backend</text>
+  <text class="text" x="433" y="399">SIS verification request</text>
+
+  <path class="arrow" d="M585 370 L840 370"/>
+  <text class="small" x="635" y="357">Authorization: Bearer service key</text>
+
+  <rect class="box" x="765" y="332" width="170" height="78" rx="14" fill="#ffffff"/>
+  <text class="step" x="783" y="357">3. Service auth</text>
+  <text class="text" x="783" y="378">Verify API key, validate</text>
+  <text class="text" x="783" y="396">identifier + password body</text>
+
+  <path class="arrow" d="M935 370 L1185 370"/>
+  <text class="small" x="1005" y="357">Query user and roles</text>
+
+  <rect class="box" x="1110" y="333" width="170" height="74" rx="14" fill="#ffffff"/>
+  <text class="step" x="1129" y="358">4. Resolve user</text>
+  <text class="text" x="1129" y="379">Find by SIS ID or email,</text>
+  <text class="text" x="1129" y="397">verify bcrypt hash</text>
+
+  <path class="return" d="M1195 430 L850 430"/>
+  <text class="small" x="1015" y="447">sanitized member data</text>
+
+  <rect class="box success" x="766" y="448" width="168" height="78" rx="14"/>
+  <text class="step" x="783" y="473">5. Build response</text>
+  <text class="text" x="783" y="494">Load roles and basic profile,</text>
+  <text class="text" x="783" y="512">update last_login_at on success</text>
+
+  <path class="return" d="M766 487 L500 487"/>
+  <text class="small" x="593" y="503">verified identity</text>
+
+  <rect class="box success" x="413" y="447" width="174" height="84" rx="14"/>
+  <text class="step" x="431" y="472">6. Continue app flow</text>
+  <text class="text" x="431" y="493">If first login: send OTP to</text>
+  <text class="text" x="431" y="511">official email, then create app account</text>
+
+  <path class="return" d="M413 487 L180 487"/>
+  <text class="small" x="254" y="503">login/signup outcome</text>
+
+  <!-- members flow -->
+  <rect class="box" x="60" y="575" width="1480" height="200" rx="22" fill="#ffffff"/>
+  <text class="label" x="95" y="615">B. Trusted member data retrieval</text>
+  <text class="small" x="95" y="638">Balamandian can fetch up-to-date university information when needed using the protected members endpoint.</text>
+
+  <rect class="box" x="415" y="665" width="170" height="72" rx="14" fill="#ffffff"/>
+  <text class="step" x="434" y="690">7. Request member</text>
+  <text class="text" x="434" y="711">GET /api/v1/members/:userId</text>
+
+  <path class="arrow" d="M585 700 L840 700"/>
+  <text class="small" x="664" y="687">service-authenticated request</text>
+
+  <rect class="box" x="765" y="663" width="170" height="74" rx="14" fill="#ffffff"/>
+  <text class="step" x="783" y="688">8. Load profile</text>
+  <text class="text" x="783" y="709">Fetch roles, student/instructor</text>
+  <text class="text" x="783" y="727">details, campus and programs</text>
+
+  <path class="arrow" d="M935 700 L1185 700"/>
+  <text class="small" x="1024" y="687">read-only queries</text>
+
+  <rect class="box" x="1110" y="664" width="170" height="72" rx="14" fill="#ffffff"/>
+  <text class="step" x="1127" y="689">9. Return rows</text>
+  <text class="text" x="1127" y="710">Resolve campus, program,</text>
+  <text class="text" x="1127" y="728">department, faculty</text>
+
+  <path class="return" d="M1195 758 L850 758"/>
+  <path class="return" d="M765 758 L500 758"/>
+  <text class="small" x="644" y="775">sanitized member JSON</text>
+
+  <!-- security notes -->
+  <rect class="box warn" x="60" y="805" width="1480" height="120" rx="22"/>
+  <text class="label" x="95" y="845">Security Notes</text>
+  <text class="text" x="95" y="872">• The SIS service API key authenticates the calling backend only. It must never be embedded in the mobile app.</text>
+  <text class="text" x="95" y="896">• User passwords are verified against bcrypt hashes in the SIS database and are never returned in API responses.</text>
+</svg>
