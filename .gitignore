@@ -1,7 +1,8 @@
-# Ignore environment files
+# Environment files
 .env
-package-lock.json
 
-
-# Ignore node modules
+# Dependencies
 node_modules/
+
+# Logs
+npm-debug.log*
