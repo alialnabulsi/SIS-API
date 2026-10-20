@@ -7,9 +7,12 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "db:check": "node scripts/db-check.js"
+    "db:check": "node scripts/db-check.js",
+    "seed:dev": "node scripts/seed-development.js",
+    "test": "node --test"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^18.0.8",
     "express": "^5.3.0",
     "pg": "^8.23.1"

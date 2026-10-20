@@ -3,6 +3,7 @@
 require('dotenv').config({ quiet: true });
 
 const app = require('./app');
+const { getServiceApiKey } = require('./config/serviceAuth');
 const {
   closePool,
   formatDatabaseError,
@@ -72,6 +73,7 @@ async function start() {
   try {
     const port = getPort();
 
+    getServiceApiKey();
     await testConnection();
     server = await listen(port);
 
