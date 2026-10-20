@@ -1,8 +1,14 @@
-# Environment files
+# Local environment files
 .env
+.env.*
+!.env.example
 
 # Dependencies
 node_modules/
 
 # Logs
+*.log
 npm-debug.log*
+
+# Test output
+coverage/

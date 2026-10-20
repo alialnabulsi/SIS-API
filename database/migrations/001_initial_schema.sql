@@ -16,7 +16,7 @@
 --     separate seed script and Argon2id or bcrypt hashes in backend code.
 --   * Use a dedicated least-privilege DB account for the SIS backend.
 --   * Keep DB credentials server-side. Never connect mobile clients to SIS DB.
---   * Do NOT execute this against production or Railway without review.
+--   * Do NOT execute this against production without review.
 --
 -- Role model:
 --   * One sis_user may have MANY SIS roles, recorded in sis_user_role.

@@ -219,6 +219,12 @@ Generate a suitable service key with `node -e "console.log(require('crypto').ran
 
 Run the automated test suite with `npm test`.
 
+## Render Deployment
+
+The production service uses Render's Node.js runtime from the `main` branch with `node src/server.js` as its start command. Configure `DATABASE_URL` and `SIS_SERVICE_API_KEY` in the Render environment; optional SSL settings remain available through `DB_SSL` and `DB_SSL_REJECT_UNAUTHORIZED`.
+
+The server reads Render's assigned `PORT` and listens on the platform-accessible default interface. Production does not require a local `.env` file, and the development seed is restricted to an explicitly local PostgreSQL host.
+
 ## Project Structure
 
 ```text

@@ -51,10 +51,6 @@ function validateSeedEnvironment() {
     throw new Error('Development seed is restricted to an explicitly local DB_HOST.');
   }
 
-  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID) {
-    throw new Error('Development seed cannot run in a Railway environment.');
-  }
-
   const password = process.env.DEV_SEED_PASSWORD;
 
   if (typeof password !== 'string' || password.length < 12) {
