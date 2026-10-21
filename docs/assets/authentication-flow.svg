@@ -1,148 +1,219 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
-  <title id="title">SIS API Authentication Flow</title>
-  <desc id="desc">Sequence flow diagram showing mobile app login and signup going through Balamandian backend to the SIS API and PostgreSQL database.</desc>
-  <defs>
-    <style>
-      .bg { fill: #f8fafc; }
-      .title { font: 700 34px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
-      .subtitle { font: 400 18px 'Segoe UI', Inter, Arial, sans-serif; fill: #475569; }
-      .laneTitle { font: 700 16px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
-      .text { font: 400 14px 'Segoe UI', Inter, Arial, sans-serif; fill: #334155; }
-      .small { font: 400 12.5px 'Segoe UI', Inter, Arial, sans-serif; fill: #64748b; }
-      .label { font: 700 15px 'Segoe UI', Inter, Arial, sans-serif; fill: #1e293b; }
-      .step { font: 600 14px 'Segoe UI', Inter, Arial, sans-serif; fill: #0f172a; }
-      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 16; }
-      .client { fill: #eff6ff; stroke: #93c5fd; }
-      .backend { fill: #ecfeff; stroke: #67e8f9; }
-      .service { fill: #f8fafc; stroke: #cbd5e1; }
-      .db { fill: #f5f3ff; stroke: #c4b5fd; }
-      .success { fill: #ecfdf5; stroke: #86efac; }
-      .warn { fill: #fff7ed; stroke: #fdba74; }
-      .line { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 8 8; }
-      .arrow { stroke: #334155; stroke-width: 2.3; fill: none; marker-end: url(#arrow); }
-      .return { stroke: #0f766e; stroke-width: 2.1; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow2); }
-      .connector { stroke: #64748b; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
-    </style>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#334155"/>
-    </marker>
-    <marker id="arrow2" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#0f766e"/>
-    </marker>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.07"/>
-    </filter>
-  </defs>
-
-  <rect class="bg" width="1600" height="980"/>
-  <text class="title" x="60" y="72">SIS API — Authentication &amp; Member Retrieval Flow</text>
-  <text class="subtitle" x="60" y="104">Sequence showing how Balamandian uses the SIS API for credential verification and trusted member lookup.</text>
-
-  <!-- Lanes -->
-  <g filter="url(#shadow)">
-    <rect class="box client" x="70" y="150" width="220" height="74" rx="18"/>
-    <text class="laneTitle" x="110" y="193">Balamandian Mobile App</text>
-
-    <rect class="box backend" x="380" y="150" width="240" height="74" rx="18"/>
-    <text class="laneTitle" x="442" y="193">Balamandian Backend</text>
-
-    <rect class="box service" x="740" y="150" width="220" height="74" rx="18"/>
-    <text class="laneTitle" x="805" y="193">SIS API</text>
-
-    <rect class="box db" x="1070" y="150" width="250" height="74" rx="18"/>
-    <text class="laneTitle" x="1128" y="193">PostgreSQL SIS Database</text>
-  </g>
-
-  <line class="line" x1="180" y1="225" x2="180" y2="900"/>
-  <line class="line" x1="500" y1="225" x2="500" y2="900"/>
-  <line class="line" x1="850" y1="225" x2="850" y2="900"/>
-  <line class="line" x1="1195" y1="225" x2="1195" y2="900"/>
-
-  <!-- signup flow area -->
-  <rect class="box" x="60" y="250" width="1480" height="290" rx="22" fill="#ffffff"/>
-  <text class="label" x="95" y="290">A. First-time signup / login verification</text>
-  <text class="small" x="95" y="313">The mobile app submits SIS credentials to Balamandian. The backend authenticates itself to SIS using a service API key.</text>
-
-  <!-- steps -->
-  <rect class="box" x="95" y="340" width="170" height="62" rx="14" fill="#ffffff"/>
-  <text class="step" x="113" y="366">1. User enters</text>
-  <text class="text" x="113" y="387">SIS ID/email + password</text>
-
-  <path class="arrow" d="M265 370 L490 370"/>
-  <text class="small" x="314" y="357">HTTPS request</text>
-
-  <rect class="box" x="415" y="335" width="170" height="72" rx="14" fill="#ffffff"/>
-  <text class="step" x="433" y="360">2. Validate input</text>
-  <text class="text" x="433" y="381">Prepare backend-to-backend</text>
-  <text class="text" x="433" y="399">SIS verification request</text>
-
-  <path class="arrow" d="M585 370 L840 370"/>
-  <text class="small" x="635" y="357">Authorization: Bearer service key</text>
-
-  <rect class="box" x="765" y="332" width="170" height="78" rx="14" fill="#ffffff"/>
-  <text class="step" x="783" y="357">3. Service auth</text>
-  <text class="text" x="783" y="378">Verify API key, validate</text>
-  <text class="text" x="783" y="396">identifier + password body</text>
-
-  <path class="arrow" d="M935 370 L1185 370"/>
-  <text class="small" x="1005" y="357">Query user and roles</text>
-
-  <rect class="box" x="1110" y="333" width="170" height="74" rx="14" fill="#ffffff"/>
-  <text class="step" x="1129" y="358">4. Resolve user</text>
-  <text class="text" x="1129" y="379">Find by SIS ID or email,</text>
-  <text class="text" x="1129" y="397">verify bcrypt hash</text>
-
-  <path class="return" d="M1195 430 L850 430"/>
-  <text class="small" x="1015" y="447">sanitized member data</text>
-
-  <rect class="box success" x="766" y="448" width="168" height="78" rx="14"/>
-  <text class="step" x="783" y="473">5. Build response</text>
-  <text class="text" x="783" y="494">Load roles and basic profile,</text>
-  <text class="text" x="783" y="512">update last_login_at on success</text>
-
-  <path class="return" d="M766 487 L500 487"/>
-  <text class="small" x="593" y="503">verified identity</text>
-
-  <rect class="box success" x="413" y="447" width="174" height="84" rx="14"/>
-  <text class="step" x="431" y="472">6. Continue app flow</text>
-  <text class="text" x="431" y="493">If first login: send OTP to</text>
-  <text class="text" x="431" y="511">official email, then create app account</text>
-
-  <path class="return" d="M413 487 L180 487"/>
-  <text class="small" x="254" y="503">login/signup outcome</text>
-
-  <!-- members flow -->
-  <rect class="box" x="60" y="575" width="1480" height="200" rx="22" fill="#ffffff"/>
-  <text class="label" x="95" y="615">B. Trusted member data retrieval</text>
-  <text class="small" x="95" y="638">Balamandian can fetch up-to-date university information when needed using the protected members endpoint.</text>
-
-  <rect class="box" x="415" y="665" width="170" height="72" rx="14" fill="#ffffff"/>
-  <text class="step" x="434" y="690">7. Request member</text>
-  <text class="text" x="434" y="711">GET /api/v1/members/:userId</text>
-
-  <path class="arrow" d="M585 700 L840 700"/>
-  <text class="small" x="664" y="687">service-authenticated request</text>
-
-  <rect class="box" x="765" y="663" width="170" height="74" rx="14" fill="#ffffff"/>
-  <text class="step" x="783" y="688">8. Load profile</text>
-  <text class="text" x="783" y="709">Fetch roles, student/instructor</text>
-  <text class="text" x="783" y="727">details, campus and programs</text>
-
-  <path class="arrow" d="M935 700 L1185 700"/>
-  <text class="small" x="1024" y="687">read-only queries</text>
-
-  <rect class="box" x="1110" y="664" width="170" height="72" rx="14" fill="#ffffff"/>
-  <text class="step" x="1127" y="689">9. Return rows</text>
-  <text class="text" x="1127" y="710">Resolve campus, program,</text>
-  <text class="text" x="1127" y="728">department, faculty</text>
-
-  <path class="return" d="M1195 758 L850 758"/>
-  <path class="return" d="M765 758 L500 758"/>
-  <text class="small" x="644" y="775">sanitized member JSON</text>
-
-  <!-- security notes -->
-  <rect class="box warn" x="60" y="805" width="1480" height="120" rx="22"/>
-  <text class="label" x="95" y="845">Security Notes</text>
-  <text class="text" x="95" y="872">• The SIS service API key authenticates the calling backend only. It must never be embedded in the mobile app.</text>
-  <text class="text" x="95" y="896">• User passwords are verified against bcrypt hashes in the SIS database and are never returned in API responses.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1930" viewBox="0 0 1680 1930" role="img" aria-labelledby="title desc"><title id="title">SIS API — Authentication and Member Retrieval</title><desc id="desc">Sequence diagram for SIS credential verification, first-login email OTP onboarding, subsequent sign-in, and separate trusted member retrieval. Password hash comparison occurs inside the SIS API, not PostgreSQL. Failed checks do not issue sessions.</desc>
+<defs>
+<marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#2563EB"/></marker>
+<marker id="teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#0F827C"/></marker>
+<marker id="navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#14283F"/></marker>
+<marker id="purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#7655BD"/></marker>
+</defs>
+<rect x="0" y="0" width="1680" height="1930" rx="0" fill="#F3F6FA"/>
+<rect x="56" y="49" width="5" height="87" rx="2" fill="#2563EB"/>
+<text x="78" y="65" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#2563EB" text-anchor="start">
+<tspan x="78" dy="0">BALAMANDIAN / SIS INTEGRATION</tspan>
+</text>
+<text x="76" y="111" font-family="DejaVu Sans, Arial, sans-serif" font-size="38" font-weight="700" fill="#14283F" text-anchor="start">
+<tspan x="76" dy="0">Authentication &amp; member retrieval</tspan>
+</text>
+<text x="78" y="145" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="400" fill="#53677E" text-anchor="start">
+<tspan x="78" dy="0">Read from top to bottom. Credential verification and member lookup are separate operations.</tspan>
+</text>
+<path d="M1160 191 H1218" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="1230" y="196" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#53677E" text-anchor="start">
+<tspan x="1230" dy="0">Request</tspan>
+</text>
+<path d="M1350 191 H1408" fill="none" stroke="#0F827C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)" stroke-dasharray="6 7"/>
+<text x="1420" y="196" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#53677E" text-anchor="start">
+<tspan x="1420" dy="0">Response</tspan>
+</text>
+<rect x="56" y="220" width="1568" height="814" rx="24" fill="#FFF" stroke="#D7E1EC" stroke-width="1.5"/>
+<text x="80" y="255" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#2563EB" text-anchor="start">
+<tspan x="80" dy="0">01</tspan>
+</text>
+<text x="120" y="255" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="start">
+<tspan x="120" dy="0">VERIFY SIS CREDENTIALS</tspan>
+</text>
+<rect x="78" y="281" width="324" height="78" rx="13" fill="#EEF4FF"/>
+<text x="240" y="312" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="240" dy="0">Mobile app</tspan>
+</text>
+<text x="240" y="339" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#2563EB" text-anchor="middle">
+<tspan x="240" dy="0">Client</tspan>
+</text>
+<path d="M240 359 V950" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<rect x="478" y="281" width="324" height="78" rx="13" fill="#EDF9F6"/>
+<text x="640" y="312" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="640" dy="0">Balamandian backend</tspan>
+</text>
+<text x="640" y="339" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#0F827C" text-anchor="middle">
+<tspan x="640" dy="0">Application identity &amp; sessions</tspan>
+</text>
+<path d="M640 359 V950" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<rect x="878" y="281" width="324" height="78" rx="13" fill="#EEF4FF"/>
+<text x="1040" y="312" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1040" dy="0">SIS API</tspan>
+</text>
+<text x="1040" y="339" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#2563EB" text-anchor="middle">
+<tspan x="1040" dy="0">Credential verification</tspan>
+</text>
+<path d="M1040 359 V950" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<rect x="1278" y="281" width="324" height="78" rx="13" fill="#F5F1FD"/>
+<text x="1440" y="312" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1440" dy="0">PostgreSQL</tspan>
+</text>
+<text x="1440" y="339" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#7655BD" text-anchor="middle">
+<tspan x="1440" dy="0">Institutional data</tspan>
+</text>
+<path d="M1440 359 V950" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<text x="440.0" y="402" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="440.0" dy="0">1  SIS ID / email + password</tspan>
+</text>
+<path d="M240 415 H640" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="840.0" y="453" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="840.0" dy="0">2  POST /api/v1/auth/verify</tspan>
+<tspan x="840.0" dy="21">Service key + credentials</tspan>
+</text>
+<path d="M640 487 H1040" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<rect x="880" y="509" width="320" height="73" rx="10" fill="#F3F7FC" stroke="#D7E1EC" stroke-width="1.5"/>
+<text x="1040" y="535" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1040" dy="0">3  Validate service key &amp; input</tspan>
+</text>
+<text x="1040" y="560" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#53677E" text-anchor="middle">
+<tspan x="1040" dy="0">Apply rate limits before verification</tspan>
+</text>
+<text x="1240.0" y="617" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="1240.0" dy="0">4  Query account, hash &amp; roles</tspan>
+</text>
+<path d="M1040 630 H1440" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="1240.0" y="671" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#0F827C" text-anchor="middle">
+<tspan x="1240.0" dy="0">5  Return internal account data</tspan>
+</text>
+<path d="M1440 684 H1040" fill="none" stroke="#0F827C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)" stroke-dasharray="6 7"/>
+<rect x="880" y="705" width="320" height="73" rx="10" fill="#F3F7FC" stroke="#D7E1EC" stroke-width="1.5"/>
+<text x="1040" y="731" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1040" dy="0">6  Compare password with bcrypt</tspan>
+</text>
+<text x="1040" y="756" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="400" fill="#53677E" text-anchor="middle">
+<tspan x="1040" dy="0">The SIS API performs the comparison</tspan>
+</text>
+<text x="1240.0" y="812" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="1240.0" dy="0">7  On success: update last_login_at</tspan>
+</text>
+<path d="M1040 825 H1440" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="840.0" y="867" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#0F827C" text-anchor="middle">
+<tspan x="840.0" dy="0">8  Return verified identity</tspan>
+<tspan x="840.0" dy="21">Sanitized member data only</tspan>
+</text>
+<path d="M1040 901 H640" fill="none" stroke="#0F827C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)" stroke-dasharray="6 7"/>
+<rect x="80" y="967" width="1520" height="44" rx="10" fill="#FFF0F0"/>
+<text x="101" y="995" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#B4414B" text-anchor="start">
+<tspan x="101" dy="0">FAILURE PATH  •  Invalid credentials or rejected requests return an error through Balamandian; no OTP onboarding or app session.</tspan>
+</text>
+<rect x="56" y="1058" width="1568" height="388" rx="24" fill="#FFF" stroke="#D7E1EC" stroke-width="1.5"/>
+<text x="80" y="1094" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="80" dy="0">02</tspan>
+</text>
+<text x="120" y="1094" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="start">
+<tspan x="120" dy="0">CONTINUE IN BALAMANDIAN</tspan>
+</text>
+<text x="1600" y="1092" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="400" fill="#53677E" text-anchor="end">
+<tspan x="1600" dy="0">After successful SIS verification</tspan>
+</text>
+<rect x="80" y="1118" width="996" height="303" rx="15" fill="#EDF9F6"/>
+<rect x="100" y="1136" width="355" height="28" rx="7" fill="#D7F0E9"/>
+<text x="112" y="1155" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="112" dy="0">FIRST LOGIN / NO VERIFIED APP ACCOUNT</tspan>
+</text>
+<text x="104" y="1203" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="104" dy="0">1</tspan>
+</text>
+<text x="140" y="1203" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="140" dy="0">Send an OTP to the official email returned by SIS.</tspan>
+</text>
+<text x="104" y="1244" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="104" dy="0">2</tspan>
+</text>
+<text x="140" y="1244" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="140" dy="0">User submits the OTP; backend checks validity and expiry.</tspan>
+</text>
+<text x="104" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="104" dy="0">3</tspan>
+</text>
+<text x="140" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="140" dy="0">After successful OTP verification, create the app account.</tspan>
+</text>
+<text x="104" y="1326" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F827C" text-anchor="start">
+<tspan x="104" dy="0">4</tspan>
+</text>
+<text x="140" y="1326" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="140" dy="0">Issue the application session and continue profile setup.</tspan>
+</text>
+<text x="104" y="1389" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#B4414B" text-anchor="start">
+<tspan x="104" dy="0">Invalid / expired OTP → no completed account or session; allow retry or resend.</tspan>
+</text>
+<rect x="1100" y="1118" width="500" height="191" rx="15" fill="#EEF4FF"/>
+<rect x="1120" y="1136" width="272" height="28" rx="7" fill="#EAF1FF"/>
+<text x="1132" y="1155" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#2563EB" text-anchor="start">
+<tspan x="1132" dy="0">EXISTING VERIFIED ACCOUNT</tspan>
+</text>
+<text x="1120" y="1200" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="1120" dy="0">Skip first-login OTP and account creation.</tspan>
+<tspan x="1120" dy="28">Balamandian issues the app session</tspan>
+<tspan x="1120" dy="28">after successful SIS verification.</tspan>
+</text>
+<rect x="1100" y="1329" width="500" height="92" rx="13" fill="#F5F8FB"/>
+<text x="1120" y="1359" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#53677E" text-anchor="start">
+<tspan x="1120" dy="0">OWNERSHIP</tspan>
+</text>
+<text x="1120" y="1386" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="1120" dy="0">SIS does not issue the Balamandian session.</tspan>
+</text>
+<rect x="56" y="1470" width="1568" height="310" rx="24" fill="#FFF" stroke="#D7E1EC" stroke-width="1.5"/>
+<text x="80" y="1506" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#7655BD" text-anchor="start">
+<tspan x="80" dy="0">03</tspan>
+</text>
+<text x="120" y="1506" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="start">
+<tspan x="120" dy="0">TRUSTED MEMBER LOOKUP</tspan>
+</text>
+<text x="81" y="1542" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#53677E" text-anchor="start">
+<tspan x="81" dy="0">Separate, read-only operation.</tspan>
+<tspan x="81" dy="24">Balamandian authorizes the app</tspan>
+<tspan x="81" dy="24">request before accessing SIS.</tspan>
+<tspan x="81" dy="24">A member lookup does not</tspan>
+<tspan x="81" dy="24">verify a password or sign in a user.</tspan>
+</text>
+<text x="640" y="1545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="640" dy="0">Balamandian backend</tspan>
+</text>
+<path d="M640 1558 V1755" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<text x="1040" y="1545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1040" dy="0">SIS API</tspan>
+</text>
+<path d="M1040 1558 V1755" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<text x="1440" y="1545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#14283F" text-anchor="middle">
+<tspan x="1440" dy="0">PostgreSQL</tspan>
+</text>
+<path d="M1440 1558 V1755" fill="none" stroke="#D2DCE8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 7"/>
+<text x="840.0" y="1569" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="840.0" dy="0">GET /api/v1/members/:userId</tspan>
+<tspan x="840.0" dy="21">Service-key authentication</tspan>
+</text>
+<path d="M640 1603 H1040" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="1240.0" y="1635" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#14283F" text-anchor="middle">
+<tspan x="1240.0" dy="0">Read member &amp; institutional data</tspan>
+</text>
+<path d="M1040 1648 H1440" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="1240.0" y="1680" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#0F827C" text-anchor="middle">
+<tspan x="1240.0" dy="0">Return requested rows</tspan>
+</text>
+<path d="M1440 1693 H1040" fill="none" stroke="#0F827C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)" stroke-dasharray="6 7"/>
+<text x="840.0" y="1727" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="400" fill="#0F827C" text-anchor="middle">
+<tspan x="840.0" dy="0">Return sanitized member JSON</tspan>
+</text>
+<path d="M1040 1740 H640" fill="none" stroke="#0F827C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)" stroke-dasharray="6 7"/>
+<rect x="56" y="1804" width="1568" height="86" rx="16" fill="#E9EFF7"/>
+<text x="80" y="1834" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#2563EB" text-anchor="start">
+<tspan x="80" dy="0">SECURITY BOUNDARY</tspan>
+</text>
+<text x="80" y="1863" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="400" fill="#14283F" text-anchor="start">
+<tspan x="80" dy="0">Keep the service key on the backend. Passwords are used transiently for verification; never return passwords or hashes in API responses.</tspan>
+</text>
 </svg>
